@@ -88,6 +88,23 @@ public class TestActivity extends Activity {
             }
         });*/
 
+
+
+        // Request a string response from the provided URL.
+        /*StringRequest volReq = new StringRequest(Request.Method.GET, uri,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Display the first 500 characters of the response string.
+                        Log.i("Response is: ", response.substring(0,500));
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.i("AAAAAA","That didn't work!");
+            }
+        });*/
+
         MyVolley.getInstance(this.getApplicationContext()).addToRequestQueue(req);
     }
 }

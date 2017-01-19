@@ -1,0 +1,17 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="5dp"
+    android:paddingBottom="48dp"
+    tools:context="kg.prosoft.oshmapreport.ListReportsFragment">
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/gray"
+        android:dividerHeight="5dp"
+        android:divider="@color/gray"
+        android:id="@+id/id_lv_incidents" />
+
+</FrameLayout>

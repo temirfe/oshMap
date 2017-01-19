@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/home_item"
+        android:icon="@drawable/ic_room_black_24dp"
+        android:title="Обращения" />
+    <item
+        android:id="@+id/second_item"
+        android:icon="@drawable/ic_add_black_24dp"
+        android:title="Добавить" />
+    <item
+        android:id="@+id/likes_item"
+        android:icon="@drawable/ic_menu_black_24dp"
+        android:title="Меню" />
+</menu>
