@@ -23,7 +23,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".TestActivity" />
-        <activity android:name=".IncidentViewActivity"></activity>
+        <activity android:name=".IncidentViewActivity" />
+        <activity android:name=".SelectCategoryActivity"></activity>
     </application>
 
 </manifest>

@@ -6,4 +6,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="incident_fixed">Исправлено</string>
     <string name="incident_not_fixed">Не исправлено</string>
+    <string name="text_categories">Категории</string>
+    <string name="done">Готово</string>
+    <string name="btn_add_category">Добавить категорию</string>
 </resources>

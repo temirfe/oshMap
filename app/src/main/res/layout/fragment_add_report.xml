@@ -58,6 +58,18 @@
                 android:hint="Дата и время" />
         </android.support.design.widget.TextInputLayout>
 
+        <TextView
+            android:text="@string/text_categories"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/id_tv_categories" />
+
+        <Button
+            android:text="@string/btn_add_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/id_btn_addcategory" />
+
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -99,5 +111,7 @@
                 android:id="@+id/editText9"
                 android:hint="Ссылка на видео"/>
         </android.support.design.widget.TextInputLayout>
+
+
     </LinearLayout>
 </FrameLayout>
