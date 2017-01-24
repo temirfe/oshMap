@@ -4,114 +4,134 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="kg.prosoft.oshmapreport.AddReportFragment">
-
-    <LinearLayout
-        android:orientation="vertical"
+    <ScrollView
         android:layout_width="match_parent"
-        android:paddingTop="10dp"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:layout_height="match_parent">
-
-        <android.support.design.widget.TextInputLayout
+        android:layout_height="wrap_content"
+        android:paddingBottom="60dp"
+        >
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:hintTextAppearance="@android:style/TextAppearance.Small">
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:inputType="text"
-                android:ems="10"
-                android:id="@+id/id_et_title"
-                android:hint="Краткое название" />
-        </android.support.design.widget.TextInputLayout>
+            android:paddingTop="10dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_height="match_parent">
 
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:hintTextAppearance="@android:style/TextAppearance.Small">
-            <EditText
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:inputType="textMultiLine"
-                android:textSize="13sp"
-                android:id="@+id/id_et_description"
-                android:hint="Подробное описание"
-                android:lines="5"
-                android:gravity="top|start"
-                android:scrollbars="vertical"
-                />
-        </android.support.design.widget.TextInputLayout>
+                app:hintTextAppearance="@android:style/TextAppearance.Small">
+                <EditText
+                    android:imeOptions="flagNoExtractUi"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:inputType="text"
+                    android:ems="10"
+                    android:id="@+id/id_et_title"
+                    android:hint="Краткое название" />
+            </android.support.design.widget.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:hintTextAppearance="@android:style/TextAppearance.Small">
-            <EditText
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:inputType="date"
-                android:layout_marginTop="15dp"
-                android:ems="10"
-                android:id="@+id/editText5"
-                android:hint="Дата и время" />
-        </android.support.design.widget.TextInputLayout>
+                android:layout_height="wrap_content"
+                app:hintTextAppearance="@android:style/TextAppearance.Small">
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="flagNoExtractUi"
+                    android:layout_marginTop="15dp"
+                    android:inputType="textMultiLine"
+                    android:textSize="13sp"
+                    android:id="@+id/id_et_description"
+                    android:hint="Подробное описание"
+                    android:lines="5"
+                    android:gravity="top|start"
+                    android:scrollbars="vertical"
+                    />
+            </android.support.design.widget.TextInputLayout>
 
-        <TextView
-            android:text="@string/text_categories"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/id_tv_categories" />
-
-        <Button
-            android:text="@string/btn_add_category"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/id_btn_addcategory" />
-
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:hintTextAppearance="@android:style/TextAppearance.Small">
-            <EditText
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:inputType="textPostalAddress"
-                android:layout_marginTop="15dp"
-                android:ems="15"
-                android:id="@+id/id_et_address"
-                android:hint="Уточните местоположение" />
-        </android.support.design.widget.TextInputLayout>
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="15dp"
+                    android:textColor="@color/blue"
+                    android:id="@+id/id_tv_date" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="@color/blue"
+                    android:id="@+id/id_tv_time" />
+            </LinearLayout>
 
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:hintTextAppearance="@android:style/TextAppearance.Small">
-            <EditText
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:inputType="textUri"
-            android:layout_marginTop="15dp"
-            android:ems="10"
-            android:id="@+id/id_et_news_link"
-            android:hint="Ссылка на новость"/>
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:hintTextAppearance="@android:style/TextAppearance.Small">
-            <EditText
+            <TextView
+                android:text="@string/text_categories"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:inputType="textUri"
-                android:layout_marginTop="15dp"
-                android:ems="10"
-                android:id="@+id/editText9"
-                android:hint="Ссылка на видео"/>
-        </android.support.design.widget.TextInputLayout>
+                android:layout_height="wrap_content"
+                android:id="@+id/id_tv_categories" />
+
+            <TextView
+                android:text="@string/tv_0_category"
+                android:textColor="@color/blue"
+                android:paddingTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/id_tv_addcategory" />
+
+            <Button
+                android:text="@string/btn_add_category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/id_btn_addcategory" />
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:hintTextAppearance="@android:style/TextAppearance.Small">
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:inputType="textPostalAddress"
+                    android:layout_marginTop="15dp"
+                    android:ems="15"
+                    android:id="@+id/id_et_address"
+                    android:hint="Уточните местоположение" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:hintTextAppearance="@android:style/TextAppearance.Small">
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:inputType="textUri"
+                    android:layout_marginTop="15dp"
+                    android:ems="10"
+                    android:id="@+id/id_et_news_link"
+                    android:hint="Ссылка на новость"/>
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:hintTextAppearance="@android:style/TextAppearance.Small">
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:inputType="textUri"
+                    android:layout_marginTop="15dp"
+                    android:ems="10"
+                    android:id="@+id/editText9"
+                    android:hint="Ссылка на видео"/>
+            </android.support.design.widget.TextInputLayout>
 
 
-    </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 </FrameLayout>

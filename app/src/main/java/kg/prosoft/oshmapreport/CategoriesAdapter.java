@@ -63,15 +63,16 @@ public class CategoriesAdapter extends BaseAdapter {
         Categories Categories = mCategoriesList.get(position);
         String title=Categories.getTitle();
         String image=Categories.getImage();
+        //String image_name=image.split("\\.")[0];
         int category_id=Categories.getId();
 
         TextView tv_category_title=(TextView) convertView.findViewById(R.id.id_tv_category_title);
         tv_category_title.setText(title);
 
-        ImageView imgv_category=(ImageView) convertView.findViewById(R.id.id_imgv_category);
+        //ImageView imgv_category=(ImageView) convertView.findViewById(R.id.id_imgv_category);
         //URI imgsrc=new URI("http://map.oshcity.kg/media/uploads/");
-        //imgv_category.setImageURI();
-
+        //int img_id = convertView.getResources().getIdentifier("kg.prosoft.oshmapreport:drawable/" + image_name, null, null);
+        //imgv_category.setImageResource(img_id);
 
         convertView.setTag(category_id);
 

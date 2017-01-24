@@ -9,4 +9,6 @@
     <string name="text_categories">Категории</string>
     <string name="done">Готово</string>
     <string name="btn_add_category">Добавить категорию</string>
+    <string name="selected">Выбрано:</string>
+    <string name="tv_0_category">Выбрано: 0</string>
 </resources>

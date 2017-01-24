@@ -14,13 +14,23 @@ import java.util.Locale;
 
 public class MainActivity extends Activity {
 
+    ReportsFragment homefrag;
+    AddReportFragment secfrag;
+    MenuFragment lfrag;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_main);
-        ReportsFragment homefrag = new ReportsFragment();
-        putFragment(homefrag);
+        if (savedInstanceState == null) {
+            homefrag = new ReportsFragment();
+            secfrag = new AddReportFragment();
+            lfrag = new MenuFragment();
+            setContentView(R.layout.activity_main);
+            putFragment(homefrag);
+        }
+
+
 
         //hide icon
         if(getActionBar()!=null){
@@ -40,18 +50,15 @@ public class MainActivity extends Activity {
                             case R.id.home_item:
                                 //getActionBar().setDisplayShowHomeEnabled(true);
                                 setTitle("Карта обращений");
-                                ReportsFragment homefrag = new ReportsFragment();
                                 putFragment(homefrag);
                                 break;
                             case R.id.second_item:
                                 setTitle("Отправить сообщение");
                                 //getActionBar().setDisplayShowHomeEnabled(false);
-                                AddReportFragment secfrag = new AddReportFragment();
                                 putFragment(secfrag);
                                 break;
                             case R.id.likes_item:
                                 setTitle("Меню");
-                                MenuFragment lfrag = new MenuFragment();
                                 putFragment(lfrag);
                                 break;
                         }
@@ -62,9 +69,21 @@ public class MainActivity extends Activity {
 
     protected void putFragment(Fragment frag){
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_container, frag);
-        ft.addToBackStack(null);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+
+        //hide all first
+        if (homefrag.isAdded()) { ft.hide(homefrag); }
+        if (secfrag.isAdded()) { ft.hide(secfrag); }
+        if (lfrag.isAdded()) { ft.hide(lfrag); }
+
+        if(frag.isAdded()) {
+            ft.show(frag);
+        } else {
+            ft.add(R.id.fragment_container, frag);
+            //ft.addToBackStack(null);
+
+        }
+
         ft.commit();
     }
 }
