@@ -29,6 +29,7 @@ public class IncidentViewActivity extends Activity {
     public TextView tv_status;
     public TextView tv_categories;
     public TextView tv_descripton;
+    String from;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +48,7 @@ public class IncidentViewActivity extends Activity {
         tv_descripton=(TextView)findViewById(R.id.id_tv_description);
         Intent intent=getIntent();
         int id=intent.getIntExtra("id",0);
+        from=intent.getStringExtra("from");
         getIncident(id);
 
     }
@@ -114,7 +116,13 @@ public class IncidentViewActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                onBackPressed();
+                if(from.equals("form")){
+                    Intent goToList = new Intent(this,MainActivity.class);
+                    startActivity(goToList);
+                }
+                else{
+                    onBackPressed();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

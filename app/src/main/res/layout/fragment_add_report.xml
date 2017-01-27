@@ -77,7 +77,6 @@
 
             <TextView
                 android:text="@string/tv_0_category"
-                android:textColor="@color/blue"
                 android:paddingTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -121,16 +120,55 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:hintTextAppearance="@android:style/TextAppearance.Small">
+
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:inputType="textUri"
                     android:layout_marginTop="15dp"
                     android:ems="10"
-                    android:id="@+id/editText9"
+                    android:id="@+id/id_et_video_link"
                     android:hint="Ссылка на видео"/>
             </android.support.design.widget.TextInputLayout>
 
+            <TextView
+            android:text="@string/sender"
+            android:paddingTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/id_tv_sender" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="15dp"
+                android:id="@+id/id_et_name"
+                android:hint="@string/person_name"
+                android:imeOptions="flagNoExtractUi"
+                android:inputType="textPersonName" />
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="15dp"
+                android:id="@+id/id_et_phone"
+                android:hint="@string/phone"
+                android:inputType="phone"
+                android:imeOptions="flagNoExtractUi" />
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="15dp"
+                android:id="@+id/id_et_email"
+                android:hint="E-mail"
+                android:inputType="textEmailAddress"
+                android:imeOptions="flagNoExtractUi" />
+
+            <Button
+                android:text="@string/submit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/id_btn_submit_report"
+                android:layout_weight="1" />
 
         </LinearLayout>
     </ScrollView>

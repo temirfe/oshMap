@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -81,9 +82,24 @@ public class MainActivity extends Activity {
         } else {
             ft.add(R.id.fragment_container, frag);
             //ft.addToBackStack(null);
-
         }
-
         ft.commit();
+    }
+
+    /*@Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.filter, menu);
+        return true;
+    }*/
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_open_filter:
+                Intent filter_intent=new Intent(this, FilterActivity.class);
+                startActivityForResult(filter_intent, 123);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -2,6 +2,7 @@ package kg.prosoft.oshmapreport;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.DataSetObserver;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.util.Log;
@@ -130,4 +131,5 @@ public class CategoriesAdapter extends BaseAdapter {
     ArrayList<Integer> getSelectedCtgs(){
         return selectedCtgs;
     }
+
 }

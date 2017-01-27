@@ -11,4 +11,15 @@
     <string name="btn_add_category">Добавить категорию</string>
     <string name="selected">Выбрано:</string>
     <string name="tv_0_category">Выбрано: 0</string>
+    <string name="submit">Отправить</string>
+    <string name="sender">Отправитель</string>
+    <string name="required">Заполните поле</string>
+    <string name="ctg_required">Выберите категорию</string>
+    <string name="sending">Отправка</string>
+    <string name="person_name">Имя, фамилия</string>
+    <string name="phone">Телефон</string>
+    <string name="apply">Применить</string>
+    <string name="all">Все</string>
+    <string name="solved">Исправленные</string>
+    <string name="not_solved">Не исправленные</string>
 </resources>

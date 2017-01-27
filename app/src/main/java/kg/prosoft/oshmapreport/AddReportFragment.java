@@ -2,6 +2,7 @@ package kg.prosoft.oshmapreport;
 
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -15,13 +16,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,6 +39,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 
 /**
@@ -42,8 +48,20 @@ import java.util.Locale;
 public class AddReportFragment extends Fragment implements View.OnClickListener {
 
     public Button btn_add_category;
+    public Button btn_submit_report;
     public TextView tv_addcategory;
-    public TextView tv_title;
+
+    public EditText et_title;
+    public EditText et_description;
+    public EditText et_name;
+    public EditText et_email;
+    public EditText et_phone;
+    public EditText et_address;
+    public EditText et_news_link;
+    public EditText et_video_link;
+    public double lat;
+    public double lng;
+
     public ArrayList<Integer> selectedCtgs;
     public HashMap<Integer, Categories> ctgMap;
     private TextView tv_date;
@@ -67,7 +85,7 @@ public class AddReportFragment extends Fragment implements View.OnClickListener 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            tv_title.setText(savedInstanceState.getString("title"));
+            //et_title.setText(savedInstanceState.getString("title"));
         }
         context=getActivity().getApplicationContext();
         // Inflate the layout for this fragment
@@ -75,7 +93,16 @@ public class AddReportFragment extends Fragment implements View.OnClickListener 
 
         tv_addcategory=(TextView)rootView.findViewById(R.id.id_tv_addcategory);
         //tv_addcategory.setOnClickListener(this);
-        tv_title=(TextView)rootView.findViewById(R.id.id_tv_title);
+
+        et_title=(EditText)rootView.findViewById(R.id.id_et_title);
+        et_description=(EditText)rootView.findViewById(R.id.id_et_description);
+        et_name=(EditText)rootView.findViewById(R.id.id_et_name);
+        et_email=(EditText)rootView.findViewById(R.id.id_et_email);
+        et_phone=(EditText)rootView.findViewById(R.id.id_et_phone);
+        et_address=(EditText)rootView.findViewById(R.id.id_et_address);
+        et_news_link=(EditText)rootView.findViewById(R.id.id_et_news_link);
+        et_video_link=(EditText)rootView.findViewById(R.id.id_et_video_link);
+
         tv_date=(TextView)rootView.findViewById(R.id.id_tv_date);
         tv_date.setOnClickListener(this);
         tv_time=(TextView)rootView.findViewById(R.id.id_tv_time);
@@ -83,6 +110,8 @@ public class AddReportFragment extends Fragment implements View.OnClickListener 
 
         btn_add_category=(Button)rootView.findViewById(R.id.id_btn_addcategory);
         btn_add_category.setOnClickListener(this);
+        btn_submit_report=(Button)rootView.findViewById(R.id.id_btn_submit_report);
+        btn_submit_report.setOnClickListener(this);
         selectedCtgs=new ArrayList<>();
         ctgMap=new HashMap<Integer, Categories>();
         requestCategories(ctgMap);
@@ -113,7 +142,117 @@ public class AddReportFragment extends Fragment implements View.OnClickListener 
                 break;
             case R.id.id_tv_time:
                 timeDialog.show();
+            case R.id.id_btn_submit_report:
+                submitForm();
                 break;
+        }
+    }
+
+    public void submitForm(){
+        boolean allGood=true;
+        final String title = et_title.getText().toString();
+        final String description = et_description.getText().toString();
+        final String name = et_name.getText().toString();
+        final String email = et_email.getText().toString();
+        final String phone = et_phone.getText().toString();
+        final String address = et_address.getText().toString();
+        final String news_link = et_news_link.getText().toString();
+        final String video_link = et_video_link.getText().toString();
+        final String date = tv_date.getText().toString();
+        final String time = tv_time.getText().toString();
+        final String latitude="40.49234";
+        final String longitude="72.8356";
+
+        if(title.trim().equals("")){
+            et_title.setError(getResources().getString(R.string.required));
+            allGood=false;
+        }
+        if(description.trim().equals("")){
+            et_description.setError(getResources().getString(R.string.required));
+            allGood=false;
+        }
+        if(address.trim().equals("")){
+            et_address.setError(getResources().getString(R.string.required));
+            allGood=false;
+        }
+        if(name.trim().equals("")){
+            et_name.setError(getResources().getString(R.string.required));
+            allGood=false;
+        }
+        if(email.trim().equals("")){
+            et_email.setError(getResources().getString(R.string.required));
+            allGood=false;
+        }
+        if(phone.trim().equals("")){
+            et_phone.setError(getResources().getString(R.string.required));
+            allGood=false;
+        }
+        if(selectedCtgs.size()==0){
+            Toast.makeText(context, getResources().getString(R.string.ctg_required), Toast.LENGTH_SHORT).show();
+            allGood=false;
+        }
+
+        if(allGood){
+            final ProgressDialog progress = new ProgressDialog(getActivity());
+            progress.setTitle(getResources().getString(R.string.sending));
+            progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+            progress.show();
+            String url="http://api.temirbek.com/incidents";
+            Response.Listener<String> listener = new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    progress.dismiss();
+                    try {
+
+                        JSONObject obj = new JSONObject(response);
+
+                        Log.d("My App", obj.toString());
+
+                        try{
+                            int id = obj.getInt("id");
+                            Log.i("RESPONSE TITLE", " "+id);
+                            if(id!=0){
+                                Intent intent = new Intent(context, IncidentViewActivity.class);
+                                intent.putExtra("id",id);
+                                intent.putExtra("from","form");
+                                startActivity(intent);
+                            }
+
+                        }catch(JSONException e){e.printStackTrace();}
+
+                    } catch (Throwable t) {
+                        Log.e("My App", "Could not parse malformed JSON: \"" + response + "\"");
+                    }
+                }
+            };
+
+            StringRequest req = new StringRequest(Request.Method.POST, url, listener, null){
+                @Override
+                protected Map<String,String> getParams(){
+                    Map<String,String> params = new HashMap<String, String>();
+                    params.put("incident_title",title);
+                    params.put("incident_description",description);
+                    params.put("incident_date",date+" "+time);
+                    params.put("person_name",name);
+                    params.put("person_email",email);
+                    params.put("person_phone",phone);
+                    params.put("latitude",latitude);
+                    params.put("longitude",longitude);
+                    params.put("location_name",address);
+                    params.put("news_link[1]",news_link);
+                    params.put("video_link[1]",video_link);
+                    int i=1;
+                    for (int ctg : selectedCtgs)
+                    {
+                        params.put("category["+i+"]",Integer.toString(ctg));
+                        i++;
+                    }
+                    params.put("incident_mode","5"); //5 is android
+
+                    return params;
+                }
+            };
+            MyVolley.getInstance(context).addToRequestQueue(req);
         }
     }
 
@@ -195,11 +334,11 @@ public class AddReportFragment extends Fragment implements View.OnClickListener 
         },hour, minute, true);
     }
 
-    @Override
+    /*@Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         String savedTitle="asdfadf";
         savedInstanceState.putString("title", savedTitle);
-    }
+    }*/
 
 
 }

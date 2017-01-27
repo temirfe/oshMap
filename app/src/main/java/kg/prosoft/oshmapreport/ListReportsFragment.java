@@ -83,6 +83,7 @@ public class ListReportsFragment extends Fragment {
             int myid=item.getId();
             Intent intent = new Intent(context, IncidentViewActivity.class);
             intent.putExtra("id",myid);
+            intent.putExtra("from","list");
             startActivity(intent);
         }
     };
