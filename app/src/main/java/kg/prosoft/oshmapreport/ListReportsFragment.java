@@ -1,17 +1,22 @@
 package kg.prosoft.oshmapreport;
 
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
@@ -48,7 +53,9 @@ public class ListReportsFragment extends Fragment {
     private int page=1;
     private int current_page=1;
     private int total_pages=0;
-
+    Uri.Builder uriB;
+    ProgressBar pb;
+    ProgressDialog progress;
     public ListReportsFragment() {
         // Required empty public constructor
     }
@@ -64,10 +71,13 @@ public class ListReportsFragment extends Fragment {
         listView = (ListView) layout.findViewById(R.id.id_lv_incidents);
         listView.setOnScrollListener(onScrollDo);
 
+        pb = (ProgressBar) layout.findViewById(R.id.progressBar1);
+
         mCommentList = new ArrayList<ReportList>();
         adapter = new ReportListAdapter(context,mCommentList);
         listView.setAdapter(adapter);
-        populateList(page);
+
+        populateList(page, null,false);
 
         listView.setOnItemClickListener(itemClickListener);
 
@@ -116,19 +126,40 @@ public class ListReportsFragment extends Fragment {
                 Log.i("ENDDD", "reached current:"+current_page+" total:"+total_pages);
                 if(current_page<total_pages){
                     int next_page=current_page+1;
-                    populateList(next_page);
+                    populateList(next_page, uriB, false);
                 }
             }
         }
     };
 
-    public void populateList(int page){
-        String uri = String.format("http://api.temirbek.com/incidents?page=%1$s",page);
+    public void populateList(int page,Uri.Builder urlB, final boolean applyNewFilter){
+
+        if(applyNewFilter){
+            progress = new ProgressDialog(getActivity());
+            progress.setProgressStyle(android.R.style.Widget_ProgressBar_Small);
+            progress.setMessage(getResources().getString(R.string.loading));
+            progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+            progress.show();
+        }
+
+        uriB=urlB;
+
+        if(uriB==null){
+            uriB = new Uri.Builder();
+            uriB.scheme("http").authority("api.temirbek.com").appendPath("incidents");
+        }
+        Uri.Builder otherBuilder = Uri.parse(uriB.build().toString()).buildUpon();
+
+        otherBuilder.appendQueryParameter("page", Integer.toString(page));
+
+        String uri = otherBuilder.build().toString();
 
         Response.Listener<JSONArray> listener = new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 try{
+                    if(applyNewFilter){mCommentList.clear();
+                        progress.dismiss();}
                     for(int i=0; i < response.length(); i++){
                         JSONObject jsonObject = response.getJSONObject(i);
                         int id = jsonObject.getInt("id");
@@ -146,11 +177,25 @@ public class ListReportsFragment extends Fragment {
 
                 }catch(JSONException e){e.printStackTrace();}
 
-                adapter.notifyDataSetChanged();
+                if(applyNewFilter){
+                    adapter = new ReportListAdapter(context,mCommentList);
+                    listView.setAdapter(adapter);
+                }
+                else{
+                    adapter.notifyDataSetChanged();
+                }
+                pb.setVisibility(ProgressBar.INVISIBLE);
+            }
+        };
+        Response.ErrorListener errorListener =new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(context, "Произошла ошибка, перезагрузите приложение", Toast.LENGTH_LONG).show();
+                pb.setVisibility(ProgressBar.INVISIBLE);
             }
         };
 
-        JsonArrayRequest  volReq = new JsonArrayRequest(Request.Method.GET, uri, null, listener,null){
+        JsonArrayRequest  volReq = new JsonArrayRequest(Request.Method.GET, uri, null, listener,errorListener){
             @Override
             protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
                 try {

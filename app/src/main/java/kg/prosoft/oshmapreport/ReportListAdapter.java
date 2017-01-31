@@ -57,7 +57,13 @@ public class ReportListAdapter extends BaseAdapter {
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         TextView statusBox=(TextView) convertView.findViewById(R.id.id_tv_box);
-        statusBox.setBackgroundResource(R.color.green);
+        int verified = incident.getVerified();
+        if(verified==1){
+            statusBox.setBackgroundResource(R.color.green);
+        }
+        else{
+            statusBox.setBackgroundResource(R.color.red);
+        }
         TextView tv_title=(TextView) convertView.findViewById(R.id.id_tv_title);
         tv_title.setText(boldTitle);
         TextView tv_text=(TextView) convertView.findViewById(R.id.id_tv_text);

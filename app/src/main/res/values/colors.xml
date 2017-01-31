@@ -6,7 +6,11 @@
 
     <color name="white">#FFF</color>
     <color name="gray">#edeef0</color>
+    <color name="gray2">#dadde1</color>
     <color name="gray5">#555</color>
     <color name="green">#5fba7d</color>
+    <color name="red">#D25E4F</color>
     <color name="blue">#3af</color>
+    <color name="lightBlue">#99d4ff</color>
+    <color name="lightBlue2">#66bfff</color>
 </resources>

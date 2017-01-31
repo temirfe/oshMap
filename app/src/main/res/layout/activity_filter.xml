@@ -11,6 +11,21 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="kg.prosoft.oshmapreport.FilterActivity">
 
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/text_search"
+        android:id="@+id/id_et_text_search"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/status"
+        android:layout_marginTop="15dp"
+        android:textColor="@color/colorPrimary"
+        />
+
     <RadioGroup
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -34,6 +49,14 @@
             android:layout_height="wrap_content"
             android:id="@+id/id_radio_not_solved" />
         </RadioGroup>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_categories"
+        android:textColor="@color/colorPrimary"
+        android:layout_marginTop="15dp"
+        />
 
     <ListView
         android:layout_width="match_parent"

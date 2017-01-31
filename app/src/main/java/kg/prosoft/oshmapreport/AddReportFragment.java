@@ -276,29 +276,38 @@ public class AddReportFragment extends Fragment implements View.OnClickListener 
     }
 
     public void requestCategories(final HashMap<Integer, Categories> ctgMap){
-        String uri = String.format("http://api.temirbek.com/categories");
-
-        Response.Listener<JSONArray> listener = new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                try{
-                    for(int i=0; i < response.length(); i++){
-                        JSONObject jsonObject = response.getJSONObject(i);
-                        int id = jsonObject.getInt("id");
-                        String title=jsonObject.getString("category_title");
-                        String image=jsonObject.getString("category_image");
-
-                        Categories categories = new Categories(id, title,image);
-                        ctgMap.put(id,categories);
-                       // mCommentList.add(comment);
-                    }
-
-                }catch(JSONException e){e.printStackTrace();}
+        CategoriesCache cachedCtgs = new CategoriesCache().getObject(context);
+        if(cachedCtgs!= null)
+        {
+            for(Categories ctg : cachedCtgs.getCategories()){
+                int id=ctg.getId();
+                ctgMap.put(id,ctg);
             }
-        };
+        }
+        else{
+            String uri = String.format("http://api.temirbek.com/categories");
 
-        JsonArrayRequest volReq = new JsonArrayRequest(Request.Method.GET, uri, null, listener,null);
-        MyVolley.getInstance(context).addToRequestQueue(volReq);
+            Response.Listener<JSONArray> listener = new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray response) {
+                    try{
+                        for(int i=0; i < response.length(); i++){
+                            JSONObject jsonObject = response.getJSONObject(i);
+                            int id = jsonObject.getInt("id");
+                            String title=jsonObject.getString("category_title");
+                            String image=jsonObject.getString("category_image");
+
+                            Categories categories = new Categories(id, title,image);
+                            ctgMap.put(id,categories);
+                        }
+
+                    }catch(JSONException e){e.printStackTrace();}
+                }
+            };
+
+            JsonArrayRequest volReq = new JsonArrayRequest(Request.Method.GET, uri, null, listener,null);
+            MyVolley.getInstance(context).addToRequestQueue(volReq);
+        }
     }
 
     @Override

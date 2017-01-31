@@ -1,13 +1,125 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="kg.prosoft.oshmapreport.MenuFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/id_ll_login"
+            android:clickable="true"
+            android:background="@drawable/blue_view_click"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            >
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_person_black_24dp"
+                android:id="@+id/id_iv_person"/>
+
+            <TextView
+                android:text="@string/login_register"
+                android:layout_width="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingTop="3dp"
+                android:id="@+id/id_tv_login"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/id_ll_about"
+            android:clickable="true"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:background="@drawable/view_click"
+            >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_local_library_black_24dp"
+                android:id="@+id/imageView"/>
+
+            <TextView
+                android:text="@string/about"
+                android:layout_width="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingTop="2dp"
+                android:id="@+id/textView"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/id_ll_feedback"
+            android:clickable="true"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:background="@drawable/view_click"
+            >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_drafts_black_24dp"
+                android:id="@+id/id_iv_feedback"/>
+
+            <TextView
+                android:text="@string/feedback"
+                android:layout_width="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingTop="2dp"
+                android:id="@+id/id_tv_feedback"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/id_ll_news"
+            android:clickable="true"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:background="@drawable/view_click"
+            >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_public_black_24dp"
+                android:id="@+id/id_iv_news"/>
+
+            <TextView
+                android:text="@string/news"
+                android:layout_width="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingTop="2dp"
+                android:id="@+id/id_tv_news"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </LinearLayout>
 
 </FrameLayout>

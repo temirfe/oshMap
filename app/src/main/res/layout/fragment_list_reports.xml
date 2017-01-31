@@ -5,7 +5,13 @@
     android:paddingTop="5dp"
     android:paddingBottom="48dp"
     tools:context="kg.prosoft.oshmapreport.ListReportsFragment">
-
+    <ProgressBar
+        android:id="@+id/progressBar1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@android:color/transparent"
+        />
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
