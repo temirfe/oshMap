@@ -15,159 +15,200 @@
             android:paddingTop="10dp"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
+            android:background="@color/gray"
             android:layout_height="match_parent">
 
-            <android.support.design.widget.TextInputLayout
+            <EditText
+                android:imeOptions="flagNoExtractUi"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:hintTextAppearance="@android:style/TextAppearance.Small">
-                <EditText
-                    android:imeOptions="flagNoExtractUi"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:inputType="text"
-                    android:ems="10"
-                    android:id="@+id/id_et_title"
-                    android:hint="Краткое название" />
-            </android.support.design.widget.TextInputLayout>
+                android:inputType="text"
+                android:id="@+id/id_et_title"
+                android:padding="5dp"
+                android:textAppearance="@android:style/TextAppearance.Small"
+                android:background="@color/white"
+                android:hint="@string/short_title" />
 
-            <android.support.design.widget.TextInputLayout
+            <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:hintTextAppearance="@android:style/TextAppearance.Small">
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:imeOptions="flagNoExtractUi"
-                    android:layout_marginTop="15dp"
-                    android:inputType="textMultiLine"
-                    android:textSize="13sp"
-                    android:id="@+id/id_et_description"
-                    android:hint="Подробное описание"
-                    android:lines="5"
-                    android:gravity="top|start"
-                    android:scrollbars="vertical"
-                    />
-            </android.support.design.widget.TextInputLayout>
+                android:imeOptions="flagNoExtractUi"
+                android:layout_marginTop="5dp"
+                android:inputType="textMultiLine"
+                android:textAppearance="@android:style/TextAppearance.Small"
+                android:id="@+id/id_et_description"
+                android:hint="@string/full_description"
+                android:background="@color/white"
+                android:padding="5dp"
+                />
 
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp">
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:layout_marginTop="15dp"
+                    android:text="@string/date_time"
+                    android:layout_marginRight="5dp"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:textColor="@color/blue"
                     android:id="@+id/id_tv_date" />
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:layout_marginTop="15dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:textColor="@color/blue"
                     android:id="@+id/id_tv_time" />
             </LinearLayout>
-
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_marginTop="7dp"
+                android:layout_marginBottom="4dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
             <TextView
                 android:text="@string/text_categories"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="15dp"
                 android:id="@+id/id_tv_categories" />
 
             <TextView
-                android:text="@string/tv_0_category"
-                android:paddingTop="10dp"
+                android:text="@string/select"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@drawable/link"
+                android:id="@+id/id_btn_addcategory" />
+            </LinearLayout>
+
+            <TextView
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:paddingLeft="6dp"
+                android:background="@color/white"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/id_tv_addcategory" />
 
-            <Button
-                android:text="@string/btn_add_category"
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPostalAddress"
+                android:layout_marginTop="7dp"
+                android:textAppearance="@android:style/TextAppearance.Small"
+                android:id="@+id/id_et_address"
+                android:hint="@string/your_location"
+                android:background="@color/white"
+                android:padding="5dp" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/id_ll_images"
+            >
+
+        </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/id_btn_addcategory" />
+                android:id="@+id/id_ll_add_photo"
+                android:clickable="true"
+                android:background="@drawable/view_click"
+                android:paddingRight="10dp"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp"
+                android:layout_marginTop="7dp"
+                android:layout_marginBottom="7dp"
+                >
 
-            <android.support.design.widget.TextInputLayout
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_add_a_photo_black_24dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:text="@string/add_image"
+                    android:paddingTop="3dp"
+                    android:id="@+id/id_tv_add_photo"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:hintTextAppearance="@android:style/TextAppearance.Small">
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:inputType="textPostalAddress"
-                    android:layout_marginTop="15dp"
-                    android:ems="15"
-                    android:id="@+id/id_et_address"
-                    android:hint="Уточните местоположение" />
-            </android.support.design.widget.TextInputLayout>
+                android:inputType="textUri"
+                android:layout_marginTop="6dp"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:id="@+id/id_et_news_link"
+                android:hint="@string/news_link"
+                android:background="@color/white"
+                android:padding="5dp"/>
 
-            <android.support.design.widget.TextInputLayout
+            <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:hintTextAppearance="@android:style/TextAppearance.Small">
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:inputType="textUri"
-                    android:layout_marginTop="15dp"
-                    android:ems="10"
-                    android:id="@+id/id_et_news_link"
-                    android:hint="Ссылка на новость"/>
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:hintTextAppearance="@android:style/TextAppearance.Small">
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:inputType="textUri"
-                    android:layout_marginTop="15dp"
-                    android:ems="10"
-                    android:id="@+id/id_et_video_link"
-                    android:hint="Ссылка на видео"/>
-            </android.support.design.widget.TextInputLayout>
+                android:inputType="textUri"
+                android:layout_marginTop="6dp"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:id="@+id/id_et_video_link"
+                android:hint="@string/video_link"
+                android:background="@color/white"
+                android:padding="5dp"/>
 
             <TextView
             android:text="@string/sender"
-            android:paddingTop="10dp"
+            android:paddingTop="15dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/id_tv_sender" />
 
             <EditText
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginTop="15dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp"
                 android:id="@+id/id_et_name"
                 android:hint="@string/person_name"
                 android:imeOptions="flagNoExtractUi"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:background="@color/white"
+                android:padding="5dp" />
             <EditText
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginTop="15dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
                 android:id="@+id/id_et_phone"
                 android:hint="@string/phone"
                 android:inputType="phone"
-                android:imeOptions="flagNoExtractUi" />
+                android:imeOptions="flagNoExtractUi"
+                android:background="@color/white"
+                android:padding="5dp" />
             <EditText
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginTop="15dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
                 android:id="@+id/id_et_email"
-                android:hint="E-mail"
+                android:hint="@string/prompt_email"
                 android:inputType="textEmailAddress"
-                android:imeOptions="flagNoExtractUi" />
+                android:imeOptions="flagNoExtractUi"
+                android:background="@color/white"
+                android:padding="5dp" />
 
             <Button
                 android:text="@string/submit"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:id="@+id/id_btn_submit_report"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/blue_view_click"
                 android:layout_weight="1" />
 
         </LinearLayout>

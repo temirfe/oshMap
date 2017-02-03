@@ -43,6 +43,31 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:id="@+id/id_ll_goToAccount"
+            android:clickable="true"
+            android:background="@drawable/blue_view_click"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_person_black_24dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingTop="3dp"
+                android:id="@+id/id_tv_name"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:id="@+id/id_ll_about"
             android:clickable="true"
             android:paddingLeft="16dp"
@@ -55,7 +80,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_local_library_black_24dp"
+                android:src="@drawable/ic_info_outline_black_24dp"
                 android:id="@+id/imageView"/>
 
             <TextView

@@ -1,35 +1,28 @@
 package kg.prosoft.oshmapreport;
 
-
+import android.app.ActionBar;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,54 +30,54 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+public class FeedsActivity extends Activity {
 
-/**
- * A simple {@link Fragment} subclass.
- */
-public class ListReportsFragment extends Fragment {
 
     ListView listView;
-    ReportListAdapter adapter;
-    List<ReportList> mCommentList;
+    FeedListAdapter adapter;
+    List<Feed> feedList;
     Context context;
     private int page=1;
     private int current_page=1;
     private int total_pages=0;
-    Uri.Builder uriB;
     ProgressBar pb;
-    ProgressDialog progress;
-    TextView tv_error;
-    public ListReportsFragment() {
-        // Required empty public constructor
-    }
-
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        context=getActivity().getApplicationContext();
-        // Inflate the layout for this fragment
-        View layout= inflater.inflate(R.layout.fragment_list_reports, container, false);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_feeds);
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowHomeEnabled(false);
+        }
+        context=this;
 
-        listView = (ListView) layout.findViewById(R.id.id_lv_incidents);
+        listView = (ListView)findViewById(R.id.id_lv_feeds);
         listView.setOnScrollListener(onScrollDo);
-        tv_error=(TextView)layout.findViewById(R.id.id_tv_load_error);
 
-        pb = (ProgressBar) layout.findViewById(R.id.progressBar1);
+        pb = (ProgressBar) findViewById(R.id.progressBar3);
 
-        mCommentList = new ArrayList<ReportList>();
-        adapter = new ReportListAdapter(context,mCommentList);
+        feedList = new ArrayList<Feed>();
+        adapter = new FeedListAdapter(this,feedList);
         listView.setAdapter(adapter);
 
-        populateList(page, null,false);
+        populateList(page);
 
         listView.setOnItemClickListener(itemClickListener);
+    }
 
-        return layout;
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     AdapterView.OnItemClickListener itemClickListener = new AdapterView.OnItemClickListener(){
@@ -92,11 +85,16 @@ public class ListReportsFragment extends Fragment {
                                 View itemView,
                                 int position,
                                 long id) {
-            ReportList item =mCommentList.get(position);
+            Feed item =feedList.get(position);
             int myid=item.getId();
-            Intent intent = new Intent(context, IncidentViewActivity.class);
+            String title=item.getTitle();
+            String text=item.getText();
+            String date=item.getDate();
+            Intent intent = new Intent(context, FeedViewActivity.class);
             intent.putExtra("id",myid);
-            intent.putExtra("from","list");
+            intent.putExtra("title",title);
+            intent.putExtra("text",text);
+            intent.putExtra("date",date);
             startActivity(intent);
         }
     };
@@ -129,76 +127,47 @@ public class ListReportsFragment extends Fragment {
                 Log.i("ENDDD", "reached current:"+current_page+" total:"+total_pages);
                 if(current_page<total_pages){
                     int next_page=current_page+1;
-                    populateList(next_page, uriB, false);
+                    populateList(next_page);
                 }
             }
         }
     };
 
-    public void populateList(int page,Uri.Builder urlB, final boolean applyNewFilter){
 
-        if(applyNewFilter){
-            progress = new ProgressDialog(getActivity());
-            progress.setProgressStyle(android.R.style.Widget_ProgressBar_Small);
-            progress.setMessage(getResources().getString(R.string.loading));
-            progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
-            progress.show();
-        }
+    public void populateList(int page){
 
-        uriB=urlB;
-
-        if(uriB==null){
-            uriB = new Uri.Builder();
-            uriB.scheme("http").authority("api.temirbek.com").appendPath("incidents");
-        }
-        Uri.Builder otherBuilder = Uri.parse(uriB.build().toString()).buildUpon();
-
-        otherBuilder.appendQueryParameter("page", Integer.toString(page));
-
-        String uri = otherBuilder.build().toString();
+        String uri = "http://api.temirbek.com/feeds?page="+page;
 
         Response.Listener<JSONArray> listener = new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 try{
-                    if(applyNewFilter){mCommentList.clear();
-                        progress.dismiss();}
                     for(int i=0; i < response.length(); i++){
                         JSONObject jsonObject = response.getJSONObject(i);
                         int id = jsonObject.getInt("id");
-                        int location_id = jsonObject.getInt("location_id");
-                        int user_id = jsonObject.optInt("user_id",0);
-                        int zoom = jsonObject.getInt("incident_zoom");
-                        String title=jsonObject.getString("incident_title");
-                        String text=jsonObject.getString("incident_description");
-                        String date=jsonObject.getString("incident_date");
-                        int verified=jsonObject.getInt("incident_verified");
+                        String title=jsonObject.getString("item_title");
+                        String text=jsonObject.getString("item_description");
+                        String date=jsonObject.getString("item_date");
 
-                        ReportList comment = new ReportList(id, title,text,location_id,user_id,date,verified,zoom);
-                        mCommentList.add(comment);
+                        Feed feed = new Feed(id, title,text,date);
+                        feedList.add(feed);
                     }
 
                 }catch(JSONException e){e.printStackTrace();}
 
-                if(applyNewFilter){
-                    adapter = new ReportListAdapter(context,mCommentList);
-                    listView.setAdapter(adapter);
-                }
-                else{
-                    adapter.notifyDataSetChanged();
-                }
-                pb.setVisibility(ProgressBar.INVISIBLE);
+                adapter.notifyDataSetChanged();
+                pb.setVisibility(View.GONE);
             }
         };
         Response.ErrorListener errorListener =new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                tv_error.setText(R.string.error_loading);
-                pb.setVisibility(ProgressBar.INVISIBLE);
+                Toast.makeText(context, "Произошла ошибка, перезагрузите приложение", Toast.LENGTH_LONG).show();
+                pb.setVisibility(View.GONE);
             }
         };
 
-        JsonArrayRequest  volReq = new JsonArrayRequest(Request.Method.GET, uri, null, listener,errorListener){
+        JsonArrayRequest volReq = new JsonArrayRequest(Request.Method.GET, uri, null, listener,errorListener){
             @Override
             protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
                 try {
@@ -217,14 +186,6 @@ public class ListReportsFragment extends Fragment {
         };
 
 
-        MyVolley.getInstance(context).addToRequestQueue(volReq);
+        MyVolley.getInstance(this).addToRequestQueue(volReq);
     }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        RequestQueue queue = MyVolley.getInstance(context).getRequestQueue();
-        queue.cancelAll(this);
-    }
-
 }

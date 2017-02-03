@@ -1,6 +1,8 @@
 package kg.prosoft.oshmapreport;
 
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
@@ -12,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 
 /**
@@ -23,6 +26,10 @@ public class MenuFragment extends Fragment implements View.OnClickListener{
     LinearLayout ll_about;
     LinearLayout ll_news;
     LinearLayout ll_feedback;
+    LinearLayout ll_goToAccount;
+    Context context;
+    SessionManager session;
+    TextView tv_name;
 
     public MenuFragment() {
         // Required empty public constructor
@@ -43,6 +50,23 @@ public class MenuFragment extends Fragment implements View.OnClickListener{
         ll_news.setOnClickListener(this);
         ll_feedback = (LinearLayout) layout.findViewById(R.id.id_ll_feedback);
         ll_feedback.setOnClickListener(this);
+        ll_goToAccount = (LinearLayout) layout.findViewById(R.id.id_ll_goToAccount);
+        ll_goToAccount.setOnClickListener(this);
+
+
+        tv_name = (TextView) layout.findViewById(R.id.id_tv_name);
+
+        context = getActivity();
+        session = new SessionManager(context.getApplicationContext());
+        if(session.isLoggedIn()){
+            String name=session.getName();
+            tv_name.setText(name);
+            Log.i("NAME IN SESSION",name);
+            ll_login.setVisibility(View.GONE);
+        }else{
+            Log.i("SESSION","Not logged in");
+            ll_goToAccount.setVisibility(View.GONE);
+        }
         return layout;
     }
 
@@ -51,16 +75,24 @@ public class MenuFragment extends Fragment implements View.OnClickListener{
         //do what you want to do when button is clicked
         switch (v.getId()) {
             case R.id.id_ll_login:
-                Log.i("LOIG","Clicked");
+                Intent login_int=new Intent(context, LoginActivity.class);
+                startActivity(login_int);
                 break;
             case R.id.id_ll_about:
-                Log.i("LOIG","About");
+                Intent ab_int=new Intent(context, AboutActivity.class);
+                startActivity(ab_int);
                 break;
             case R.id.id_ll_news:
-                Log.i("LOIG","NEws");
+                Intent feeds_int=new Intent(context, FeedsActivity.class);
+                startActivity(feeds_int);
                 break;
             case R.id.id_ll_feedback:
-                Log.i("LOIG","feedbac");
+                Intent feedb_int=new Intent(context, FeedbackActivity.class);
+                startActivity(feedb_int);
+                break;
+            case R.id.id_ll_goToAccount:
+                Intent acc_int=new Intent(context, AccountActivity.class);
+                startActivity(acc_int);
                 break;
         }
     }

@@ -44,6 +44,14 @@ public class MainActivity extends Activity {
             secfrag = new AddReportFragment();
             lfrag = new MenuFragment();
             setContentView(R.layout.activity_main);
+        }
+
+        Intent intent=getIntent();
+        String from =intent.getStringExtra("from");
+        if(from!=null && from.equals("login")){
+            putFragment(lfrag);
+        }
+        else{
             putFragment(homefrag);
         }
 
@@ -67,17 +75,17 @@ public class MainActivity extends Activity {
                         switch (item.getItemId()) {
                             case R.id.home_item:
                                 //getActionBar().setDisplayShowHomeEnabled(true);
-                                setTitle("Карта обращений");
                                 putFragment(homefrag);
+                                setTitle(R.string.app_name_short);
                                 break;
                             case R.id.second_item:
-                                setTitle("Отправить сообщение");
                                 //getActionBar().setDisplayShowHomeEnabled(false);
                                 putFragment(secfrag);
+                                setTitle(R.string.send_incident);
                                 break;
                             case R.id.likes_item:
-                                setTitle("Меню");
                                 putFragment(lfrag);
+                                setTitle(R.string.menu);
                                 break;
                         }
                         return true;

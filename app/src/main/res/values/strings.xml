@@ -8,7 +8,9 @@
     <string name="incident_not_fixed">Не исправлено</string>
     <string name="text_categories">Категории</string>
     <string name="done">Готово</string>
-    <string name="btn_add_category">Добавить категорию</string>
+    <string name="add_category">Добавить категорию</string>
+    <string name="add">Добавить</string>
+    <string name="select">Выбрать</string>
     <string name="selected">Выбрано:</string>
     <string name="tv_0_category">Выбрано: 0</string>
     <string name="submit">Отправить</string>
@@ -16,7 +18,9 @@
     <string name="required">Заполните поле</string>
     <string name="ctg_required">Выберите категорию</string>
     <string name="sending">Отправка</string>
+    <string name="send_incident">Отправить сообщение</string>
     <string name="person_name">Имя, фамилия</string>
+    <string name="name">Имя</string>
     <string name="phone">Телефон</string>
     <string name="apply">Применить</string>
     <string name="reset">Сбросить</string>
@@ -30,4 +34,40 @@
     <string name="about">О проекте</string>
     <string name="feedback">Обратная связь</string>
     <string name="news">Новости</string>
+    <string name="message">Сообщение</string>
+    <string name="feedback_success">Ваше сообщение отправлено</string>
+    <string name="feedback_fail">Не удалось отправить сообщеине, попробуйте ещё раз</string>
+    <string name="title_activity_login">Вход</string>
+    <string name="close">Закрыть</string>
+    <string name="my_account">Личный кабинет</string>
+    <string name="my_incidents">Мои сообщения</string>
+    <string name="logout">Выйти</string>
+    <string name="menu">Меню</string>
+    <string name="app_error">Произошла ошибка</string>
+    <string name="short_title">Краткое название</string>
+    <string name="full_description">Подробное описание</string>
+    <string name="date_time">Дата и время:</string>
+    <string name="your_location">Уточните местоположение</string>
+    <string name="news_link">Ссылка на новость (необязательно)</string>
+    <string name="video_link">Ссылка на видео (необязательно)</string>
+    <string name="add_image">Добавить фото</string>
+    <string name="error_loading">Произошла ошибка, перезагрузите приложение</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Пароль</string>
+    <string name="password_repeat">Повторите пароль</string>
+    <string name="action_sign_in">Вход или регистрация</string>
+    <string name="action_sign_in_short">Войти</string>
+    <string name="error_invalid_email">Неверно указан email</string>
+    <string name="error_invalid_password">Пароль слишком короткий</string>
+    <string name="error_password_match">Пароли не совподают</string>
+    <string name="error_incorrect_password">Неверно указан пароль</string>
+    <string name="error_field_required">Заполните поле</string>
+    <string name="register">Регистрация</string>
+    <string name="permission_rationale">"Требуется разрешение к контактам для автозаполнения почты."</string>
+    <string name="login_fail">"Ошибка при авторизации"</string>
+    <string name="user_not_found">"Такой email не зарегистрирован"</string>
+    <string name="password_error">"Неверный пароль"</string>
+    <string name="email_taken">"Пользователь с такой почтой уже зарегистрирован"</string>
 </resources>
