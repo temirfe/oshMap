@@ -17,7 +17,7 @@
             android:paddingEnd="16dp"
             android:background="@color/gray"
             android:layout_height="match_parent">
-
+            <!--title-->
             <EditText
                 android:imeOptions="flagNoExtractUi"
                 android:layout_width="match_parent"
@@ -28,7 +28,7 @@
                 android:textAppearance="@android:style/TextAppearance.Small"
                 android:background="@color/white"
                 android:hint="@string/short_title" />
-
+            <!--description-->
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -42,6 +42,7 @@
                 android:padding="5dp"
                 />
 
+            <!--date-->
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
@@ -64,6 +65,8 @@
                     android:textColor="@color/blue"
                     android:id="@+id/id_tv_time" />
             </LinearLayout>
+
+            <!--categories-->
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_marginTop="7dp"

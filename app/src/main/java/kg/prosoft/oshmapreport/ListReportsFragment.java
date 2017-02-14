@@ -1,6 +1,8 @@
 package kg.prosoft.oshmapreport;
 
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -51,13 +55,17 @@ public class ListReportsFragment extends Fragment {
     ReportListAdapter adapter;
     List<ReportList> mCommentList;
     Context context;
+    Activity activity;
     private int page=1;
     private int current_page=1;
-    private int total_pages=0;
+    private int total_pages;
     Uri.Builder uriB;
     ProgressBar pb;
     ProgressDialog progress;
-    TextView tv_error;
+    Button btn_reload;
+    LinearLayout ll_reload;
+    public int ctg;
+    public int user_id;
     public ListReportsFragment() {
         // Required empty public constructor
     }
@@ -66,13 +74,16 @@ public class ListReportsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        context=getActivity().getApplicationContext();
+        activity=getActivity();
+        context=activity.getApplicationContext();
         // Inflate the layout for this fragment
         View layout= inflater.inflate(R.layout.fragment_list_reports, container, false);
 
         listView = (ListView) layout.findViewById(R.id.id_lv_incidents);
         listView.setOnScrollListener(onScrollDo);
-        tv_error=(TextView)layout.findViewById(R.id.id_tv_load_error);
+        ll_reload=(LinearLayout)layout.findViewById(R.id.id_ll_reload);
+        btn_reload=(Button)layout.findViewById(R.id.id_btn_reload);
+        btn_reload.setOnClickListener(reloadClickListener);
 
         pb = (ProgressBar) layout.findViewById(R.id.progressBar1);
 
@@ -87,6 +98,14 @@ public class ListReportsFragment extends Fragment {
         return layout;
     }
 
+    View.OnClickListener reloadClickListener = new View.OnClickListener(){
+        public void onClick(View v){
+            populateList(page, null,false);
+            pb.setVisibility(ProgressBar.VISIBLE);
+            ll_reload.setVisibility(View.GONE);
+        }
+    };
+
     AdapterView.OnItemClickListener itemClickListener = new AdapterView.OnItemClickListener(){
         public void onItemClick(AdapterView<?> listView,
                                 View itemView,
@@ -97,7 +116,8 @@ public class ListReportsFragment extends Fragment {
             Intent intent = new Intent(context, IncidentViewActivity.class);
             intent.putExtra("id",myid);
             intent.putExtra("from","list");
-            startActivity(intent);
+            Log.i("ListRep","start for result");
+            startActivityForResult(intent, 123);
         }
     };
 
@@ -123,14 +143,25 @@ public class ListReportsFragment extends Fragment {
         }
 
         private void isScrollCompleted() {
-            if (totalItem - currentFirstVisibleItem == currentVisibleItemCount
-                    && this.currentScrollState == SCROLL_STATE_IDLE) {
-                /** To do code here **/
-                Log.i("ENDDD", "reached current:"+current_page+" total:"+total_pages);
+
+            int threshold=totalItem-(currentFirstVisibleItem+currentVisibleItemCount);
+
+            if(threshold<=2 && this.currentScrollState == SCROLL_STATE_IDLE){
                 if(current_page<total_pages){
+                    Log.i("Threshold reached", "loading next. current:"+current_page+" total:"+total_pages);
                     int next_page=current_page+1;
                     populateList(next_page, uriB, false);
                 }
+            }
+
+            if (totalItem - currentFirstVisibleItem == currentVisibleItemCount
+                    && this.currentScrollState == SCROLL_STATE_IDLE) {
+                Log.i("END of Current", "reached current:"+current_page+" total:"+total_pages);
+                progress = new ProgressDialog(getActivity());
+                progress.setProgressStyle(android.R.style.Widget_ProgressBar_Small);
+                progress.setMessage(getResources().getString(R.string.loading));
+                progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+                progress.show();
             }
         }
     };
@@ -151,6 +182,9 @@ public class ListReportsFragment extends Fragment {
             uriB = new Uri.Builder();
             uriB.scheme("http").authority("api.temirbek.com").appendPath("incidents");
         }
+        if(user_id!=0){
+            uriB.appendQueryParameter("user_id", ""+user_id);
+        }
         Uri.Builder otherBuilder = Uri.parse(uriB.build().toString()).buildUpon();
 
         otherBuilder.appendQueryParameter("page", Integer.toString(page));
@@ -161,22 +195,31 @@ public class ListReportsFragment extends Fragment {
             @Override
             public void onResponse(JSONArray response) {
                 try{
-                    if(applyNewFilter){mCommentList.clear();
-                        progress.dismiss();}
-                    for(int i=0; i < response.length(); i++){
-                        JSONObject jsonObject = response.getJSONObject(i);
-                        int id = jsonObject.getInt("id");
-                        int location_id = jsonObject.getInt("location_id");
-                        int user_id = jsonObject.optInt("user_id",0);
-                        int zoom = jsonObject.getInt("incident_zoom");
-                        String title=jsonObject.getString("incident_title");
-                        String text=jsonObject.getString("incident_description");
-                        String date=jsonObject.getString("incident_date");
-                        int verified=jsonObject.getInt("incident_verified");
+                    if(progress!=null){progress.dismiss();}
+                    if(applyNewFilter){mCommentList.clear();}
+                    int leng=response.length();
+                    if(leng>0){
+                        for(int i=0; i < leng; i++){
+                            JSONObject jsonObject = response.getJSONObject(i);
+                            int id = jsonObject.getInt("id");
+                            int location_id = jsonObject.getInt("location_id");
+                            int user_id = jsonObject.optInt("user_id",0);
+                            int zoom = jsonObject.getInt("incident_zoom");
+                            String title=jsonObject.getString("incident_title");
+                            String text=jsonObject.getString("incident_description");
+                            String date=jsonObject.getString("incident_date");
+                            int verified=jsonObject.getInt("incident_verified");
 
-                        ReportList comment = new ReportList(id, title,text,location_id,user_id,date,verified,zoom);
-                        mCommentList.add(comment);
+                            ReportList comment = new ReportList(id, title,text,location_id,user_id,date,verified,zoom);
+                            mCommentList.add(comment);
+                        }
                     }
+                    else{
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                        builder.setMessage(R.string.no_result).setNegativeButton(R.string.close,null).create().show();
+                    }
+
 
                 }catch(JSONException e){e.printStackTrace();}
 
@@ -188,13 +231,14 @@ public class ListReportsFragment extends Fragment {
                     adapter.notifyDataSetChanged();
                 }
                 pb.setVisibility(ProgressBar.INVISIBLE);
+                ll_reload.setVisibility(View.GONE);
             }
         };
         Response.ErrorListener errorListener =new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                tv_error.setText(R.string.error_loading);
                 pb.setVisibility(ProgressBar.INVISIBLE);
+                ll_reload.setVisibility(View.VISIBLE);
             }
         };
 
@@ -221,10 +265,22 @@ public class ListReportsFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        RequestQueue queue = MyVolley.getInstance(context).getRequestQueue();
-        queue.cancelAll(this);
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (data == null) {return;}
+        if(requestCode==123){
+
+            Uri.Builder builder = new Uri.Builder();
+            builder.scheme("http")
+                    .authority("api.temirbek.com")
+                    .appendPath("incidents");
+
+            ctg = data.getIntExtra("ctg",0);
+            if(ctg!=0){
+                builder.appendQueryParameter("category_id[]", Integer.toString(ctg));
+            }
+
+            populateList(1,builder,true);
+        }
     }
 
 }

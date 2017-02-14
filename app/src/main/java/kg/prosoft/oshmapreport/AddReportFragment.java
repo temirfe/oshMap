@@ -13,6 +13,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -32,6 +33,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -46,13 +48,16 @@ import com.android.volley.toolbox.StringRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -67,6 +72,15 @@ import static android.app.Activity.RESULT_OK;
  * A simple {@link Fragment} subclass.
  */
 public class AddReportFragment extends Fragment implements View.OnClickListener {
+
+
+    private static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 100;
+    public static final int MEDIA_TYPE_IMAGE = 1;
+
+    // directory name to store captured images and videos
+    private static final String IMAGE_DIRECTORY_NAME = "Camera";
+
+    private Uri fileUri; // file url to store image/video
 
     public TextView btn_add_category;
     public Button btn_submit_report;
@@ -101,6 +115,7 @@ public class AddReportFragment extends Fragment implements View.OnClickListener 
     Context context;
     Context activity;
     private Bitmap bitmap;
+    private int user_id;
 
     public AddReportFragment() {
         // Required empty public constructor
@@ -169,6 +184,9 @@ public class AddReportFragment extends Fragment implements View.OnClickListener 
             String email=session.getEmail();
             et_name.setText(name);
             et_email.setText(email);
+        }
+        if(session.isLoggedIn()){
+            user_id = session.getUserId();
         }
 
         return rootView;
@@ -272,11 +290,11 @@ public class AddReportFragment extends Fragment implements View.OnClickListener 
 
                         try{
                             int id = obj.getInt("id");
-                            Log.i("RESPONSE TITLE", " "+id);
                             if(id!=0){
                                 Intent intent = new Intent(context, IncidentViewActivity.class);
                                 intent.putExtra("id",id);
                                 intent.putExtra("from","form");
+                                //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
                             }
 
@@ -288,7 +306,8 @@ public class AddReportFragment extends Fragment implements View.OnClickListener 
                 }
             };
 
-            Response.ErrorListener errorResp =new Response.ErrorListener() {
+            Response.ErrorListener errorResp =new Response.ErrorListener()
+            {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     // As of f605da3 the following should work
@@ -297,13 +316,18 @@ public class AddReportFragment extends Fragment implements View.OnClickListener 
                         try {
                             String res = new String(response.data,
                                     HttpHeaderParser.parseCharset(response.headers, "utf-8"));
-                            // Now you can use any deserializer to make sense of data
-                            JSONObject errObj = new JSONObject(res);
+                            Object json = new JSONTokener(res).nextValue();
+                            if (json instanceof JSONObject){
+                                JSONObject err = new JSONObject(res);
+                                Log.i("RESPONSE err 1", err.toString());
+                            }
+                            else if (json instanceof JSONArray){
+                                JSONArray err = new JSONArray(res);
+                                Log.i("RESPONSE err 1", err.toString());
+                            }
                             progress.dismiss();
                             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                             builder.setMessage(R.string.app_error).setNegativeButton(R.string.close,null).create().show();
-
-                            Log.i("RESPONSE err 1", errObj.toString());
                         } catch (UnsupportedEncodingException e1) {
                             // Couldn't properly decode data to string
                             e1.printStackTrace();
@@ -332,6 +356,7 @@ public class AddReportFragment extends Fragment implements View.OnClickListener 
                     params.put("location_name",address);
                     params.put("news_link[1]",news_link);
                     params.put("video_link[1]",video_link);
+                    if(user_id!=0){params.put("user_id",Integer.toString(user_id));}
                     int i=1;
                     for (int ctg : selectedCtgs)
                     {
@@ -349,7 +374,10 @@ public class AddReportFragment extends Fragment implements View.OnClickListener 
                     return params;
                 }
             };
-            Log.i("VOLLEY SEND", "AAAAAAAAAAAAAAAAA");
+            req.setRetryPolicy(new DefaultRetryPolicy(
+                    0,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
             MyVolley.getInstance(activity).addToRequestQueue(req);
         }
         else{
@@ -359,6 +387,10 @@ public class AddReportFragment extends Fragment implements View.OnClickListener 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CAMERA_CAPTURE_IMAGE_REQUEST_CODE && resultCode == RESULT_OK) {
+            String path=fileUri.getPath();
+            previewImage(path);
+        }
         if (data == null) {return;}
         if(requestCode==1 && resultCode==RESULT_OK){ //selected categories
             selectedCtgs = data.getIntegerArrayListExtra("ctg1");
@@ -374,7 +406,6 @@ public class AddReportFragment extends Fragment implements View.OnClickListener 
             }
             else
                 tv_addcategory.setText(getResources().getString(R.string.selected)+" "+selectedCount);
-            Log.i("RECEIVED",selectedCtgs.toString());
         }
 
         else if(requestCode==101 && resultCode==RESULT_OK){ //get image from gallery
@@ -388,20 +419,24 @@ public class AddReportFragment extends Fragment implements View.OnClickListener 
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
             String filePath = cursor.getString(columnIndex);
             cursor.close();
+            previewImage(filePath);
 
-            try {
-                bitmap = MyImageHelper.decodeSampledBitmapFromPath(filePath, 400, 400);
-                selectedImages.add(getStringImage(bitmap));
+        }
+    }
 
-                ImageView iv = new ImageView(activity);
-                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(80, 80);
-                iv.setLayoutParams(layoutParams);
-                iv.setImageBitmap(bitmap);
-                ll_images.setPadding(0,10,0,10);
-                ll_images.addView(iv);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    public void previewImage(String path){
+        try {
+            bitmap = MyImageHelper.decodeSampledBitmapFromPath(path, 400, 400);
+            selectedImages.add(getStringImage(bitmap));
+
+            ImageView iv = new ImageView(activity);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(80, 80);
+            iv.setLayoutParams(layoutParams);
+            iv.setImageBitmap(bitmap);
+            ll_images.setPadding(0,10,0,10);
+            ll_images.addView(iv);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -505,7 +540,16 @@ public class AddReportFragment extends Fragment implements View.OnClickListener 
                 .setTitle(R.string.add_image)
                 .setAdapter(adapter, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
-                        if(item==0){}
+                        if(item==0){
+
+                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
+
+                            intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+
+                            // start the image capture Intent
+                            startActivityForResult(intent, CAMERA_CAPTURE_IMAGE_REQUEST_CODE);
+                        }
                         else if(item==1){
                             Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                             startActivityForResult(i, 101);
@@ -520,5 +564,39 @@ public class AddReportFragment extends Fragment implements View.OnClickListener 
         byte[] imageBytes = baos.toByteArray();
         String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
         return encodedImage;
+    }
+
+    public Uri getOutputMediaFileUri(int type) {
+        return Uri.fromFile(getOutputMediaFile(type));
+    }
+    private static File getOutputMediaFile(int type) {
+
+        // External sdcard location
+        File mediaStorageDir = new File(
+                Environment
+                        .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                IMAGE_DIRECTORY_NAME);
+
+        // Create the storage directory if it does not exist
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                Log.d(IMAGE_DIRECTORY_NAME, "Oops! Failed create "
+                        + IMAGE_DIRECTORY_NAME + " directory");
+                return null;
+            }
+        }
+
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss",
+                Locale.getDefault()).format(new Date());
+        File mediaFile;
+        if (type == MEDIA_TYPE_IMAGE) {
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator
+                    + "IMG_" + timeStamp + ".jpg");
+        }else {
+            return null;
+        }
+
+        return mediaFile;
     }
 }

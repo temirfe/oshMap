@@ -64,6 +64,20 @@ public class SessionManager {
     }
 
     /**
+     * Create comment session
+     * */
+    public void createIncidentSession(String name, String email){
+        editor.putBoolean(itrue, true);
+
+        // Storing name in pref
+        editor.putString(iname, name);
+        editor.putString(iemail, email);
+
+        // commit changes
+        editor.commit();
+    }
+
+    /**
      * Create login session
      * */
     public void createLoginSession(String name, String email, int user_id, String access_token){

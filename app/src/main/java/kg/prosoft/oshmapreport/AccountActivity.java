@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -11,6 +12,7 @@ import android.widget.LinearLayout;
 public class AccountActivity extends Activity implements View.OnClickListener {
 
     LinearLayout ll_logout;
+    LinearLayout ll_myincidents;
     SessionManager session;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +27,8 @@ public class AccountActivity extends Activity implements View.OnClickListener {
         session = new SessionManager(getApplicationContext());
         ll_logout = (LinearLayout) findViewById(R.id.id_ll_logout);
         ll_logout.setOnClickListener(this);
+        ll_myincidents = (LinearLayout) findViewById(R.id.id_ll_myincidents);
+        ll_myincidents.setOnClickListener(this);
     }
 
     @Override
@@ -46,6 +50,13 @@ public class AccountActivity extends Activity implements View.OnClickListener {
         switch (v.getId()) {
             case R.id.id_ll_logout:
                 session.logoutUser();
+                finish();
+                break;
+            case R.id.id_ll_myincidents:
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.putExtra("from","myIncidents");
+                intent.putExtra("user_id",session.getUserId());
+                startActivity(intent);
                 finish();
                 break;
         }

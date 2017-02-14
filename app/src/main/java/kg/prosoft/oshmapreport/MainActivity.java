@@ -2,6 +2,7 @@ package kg.prosoft.oshmapreport;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
@@ -31,9 +32,12 @@ public class MainActivity extends Activity {
 
     ReportsFragment homefrag;
     AddReportFragment secfrag;
-    MenuFragment lfrag;
+    MenuFragment menuFrag;
     ArrayList<Categories> mCategoriesList;
     Context context;
+    RichBottomNavigationView botNav;
+    String from;
+    Bundle fromBundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,14 +46,15 @@ public class MainActivity extends Activity {
         if (savedInstanceState == null) {
             homefrag = new ReportsFragment();
             secfrag = new AddReportFragment();
-            lfrag = new MenuFragment();
+            menuFrag = new MenuFragment();
             setContentView(R.layout.activity_main);
         }
 
         Intent intent=getIntent();
-        String from =intent.getStringExtra("from");
-        if(from!=null && from.equals("login")){
-            putFragment(lfrag);
+        from =intent.getStringExtra("from");
+        if(from==null){from="";}
+        if(from.equals("login")){
+            putFragment(menuFrag);
         }
         else{
             putFragment(homefrag);
@@ -64,8 +69,7 @@ public class MainActivity extends Activity {
         }
 
         //bottomNav
-        RichBottomNavigationView botNav = (RichBottomNavigationView)
-                findViewById(R.id.bottom_navigation);
+        botNav = (RichBottomNavigationView) findViewById(R.id.bottom_navigation);
 
         botNav.setOnNavigationItemSelectedListener(
                 new RichBottomNavigationView.OnNavigationItemSelectedListener() {
@@ -84,7 +88,7 @@ public class MainActivity extends Activity {
                                 setTitle(R.string.send_incident);
                                 break;
                             case R.id.likes_item:
-                                putFragment(lfrag);
+                                putFragment(menuFrag);
                                 setTitle(R.string.menu);
                                 break;
                         }
@@ -97,16 +101,27 @@ public class MainActivity extends Activity {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 
+        //if user clicked "My incidents" from menu, then "from" will come with "myIncidnets"
+        if(fromBundle==null){
+            fromBundle = new Bundle();
+            fromBundle.putString("from", from);
+            frag.setArguments(fromBundle);
+        }
+
+        if(frag.isVisible()){
+            return;
+        }
+
         //hide all first
         if (homefrag.isAdded()) { ft.hide(homefrag); }
         if (secfrag.isAdded()) { ft.hide(secfrag); }
-        if (lfrag.isAdded()) { ft.hide(lfrag); }
+        if (menuFrag.isAdded()) { ft.hide(menuFrag); }
 
         if(frag.isAdded()) {
             ft.show(frag);
         } else {
             ft.add(R.id.fragment_container, frag);
-            //ft.addToBackStack(null);
+            //ft.addToBackStack(null);//problem with bottomNavigationView
         }
         ft.commit();
     }
@@ -198,4 +213,23 @@ public class MainActivity extends Activity {
         // The directory is now empty so delete it
         return dir.delete();
     }
+
+    /*@Override
+    public void onBackPressed() {
+        FragmentManager manager = getFragmentManager();
+        if(manager.getBackStackEntryCount() > 0) {
+            super.onBackPressed();
+            Fragment currentFragment = manager.findFragmentById(R.id.fragment_container);
+            if(currentFragment instanceof ReportsFragment){
+                botNav.getMenu().getItem(0).setChecked(true);
+            }
+            else if(currentFragment instanceof AddReportFragment){
+                botNav.getMenu().getItem(1).setChecked(true);
+            }
+            else if(currentFragment instanceof MenuFragment){
+                botNav.getMenu().getItem(2).setChecked(true);
+            }
+        }
+
+    }*/
 }

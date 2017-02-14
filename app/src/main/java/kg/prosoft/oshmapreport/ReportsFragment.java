@@ -39,10 +39,11 @@ public class ReportsFragment extends Fragment {
     Context context;
     public MapReportsFragment mapFrag;
     public ListReportsFragment listFrag;
-    boolean hasFilter;
     public String verify;
     public String received_text;
+    public String show_from;
     ArrayList<Integer> selectedCtgs;
+    SessionManager session;
 
     public ReportsFragment() {
         // Required empty public constructor
@@ -53,9 +54,9 @@ public class ReportsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         context=getActivity().getApplicationContext();
+        session = new SessionManager(context);
         // Inflate the layout for this fragment
         View layout= inflater.inflate(R.layout.fragment_reports, container, false);
-        hasFilter=false;
         setHasOptionsMenu(true);
 
         if(selectedCtgs==null){
@@ -67,6 +68,18 @@ public class ReportsFragment extends Fragment {
 
         tabLayout = (TabLayout) layout.findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+
+        //if user clicked "My incidents" from menu
+        String from = getArguments().getString("from");
+        int user_id = session.getUserId();
+        if(from!=null && from.equals("myIncidents") && user_id!=0){
+            listFrag.user_id=user_id;
+            show_from="me";
+        }
+        else{
+            show_from="all";
+            Log.i("FAIL","id "+user_id+" from"+from);
+        }
 
         return layout;
     }
@@ -103,9 +116,14 @@ public class ReportsFragment extends Fragment {
             case R.id.action_open_filter:
                 //Intent intent = new Intent(this, InboxActivity.class);
                 //startActivity(intent);
+                if(listFrag.ctg!=0){
+                    selectedCtgs.add(listFrag.ctg);
+                }
 
                 Intent filter_intent=new Intent(context, FilterActivity.class);
                 filter_intent.putExtra("verify", verify);
+                Log.i("SHOW", show_from);
+                filter_intent.putExtra("show_from", show_from);
                 filter_intent.putExtra("received_text", received_text);
                 filter_intent.putExtra("selectedCtgs", selectedCtgs);
                 startActivityForResult(filter_intent, 123);
@@ -117,7 +135,8 @@ public class ReportsFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (data == null) {return;}
+        Log.i("ActRes","came here");
+        if (data == null) { Log.i("ActRes","null");  return;}
         if(requestCode==123){
 
             Uri.Builder builder = new Uri.Builder();
@@ -128,6 +147,10 @@ public class ReportsFragment extends Fragment {
             verify = data.getStringExtra("verify");
             if(verify.equals("0") || verify.equals("1")){
                 builder.appendQueryParameter("verified", verify);
+            }
+            show_from = data.getStringExtra("show_from");
+            if(show_from.equals("me")){
+                builder.appendQueryParameter("user_id", ""+session.getUserId());
             }
 
             received_text = data.getStringExtra("query_text");
@@ -142,6 +165,9 @@ public class ReportsFragment extends Fragment {
                 {
                     builder.appendQueryParameter("category_id[]", Integer.toString(ctg));
                 }
+            }
+            else{
+                Log.i("ActRes","ctg is null");
             }
 
             listFrag.populateList(1,builder,true);

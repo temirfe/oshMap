@@ -54,8 +54,10 @@
         <activity
             android:name=".AccountActivity"
             android:label="@string/my_account" />
-        <activity android:name=".RegisterActivity"
-            android:label="@string/register" ></activity>
+        <activity
+            android:name=".RegisterActivity"
+            android:label="@string/register" />
+        <activity android:name=".GalleryActivity"></activity>
     </application>
 
 </manifest>

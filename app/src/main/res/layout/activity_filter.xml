@@ -1,65 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_filter"
+    android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="kg.prosoft.oshmapreport.FilterActivity">
-
-    <EditText
+    tools:context="kg.prosoft.oshmapreport.FilterActivity"
+    >
+    <LinearLayout
+        android:id="@+id/activity_filter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/text_search"
-        android:id="@+id/id_et_text_search"
-        />
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="@dimen/activity_vertical_margin">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/status"
-        android:layout_marginTop="15dp"
-        android:textColor="@color/colorPrimary"
-        />
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/text_search"
+            android:id="@+id/id_et_text_search"
+            />
 
-    <RadioGroup
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/id_rgroup_verify"
-        android:checkedButton="@+id/id_radio_all">
-        <RadioButton
-            android:text="@string/all"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
-            android:id="@+id/id_radio_all" />
-        <RadioButton
-            android:text="@string/solved"
-            android:layout_width="wrap_content"
+            android:text="@string/status"
+            android:layout_marginTop="15dp"
+            android:textColor="@color/colorPrimary"
+            />
+
+        <RadioGroup
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
-            android:id="@+id/id_radio_solved" />
-        <RadioButton
-            android:text="@string/not_solved"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/id_radio_not_solved" />
+            android:id="@+id/id_rgroup_verify"
+            android:checkedButton="@+id/id_radio_all">
+            <RadioButton
+                android:text="@string/all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:id="@+id/id_radio_all" />
+            <RadioButton
+                android:text="@string/solved"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:id="@+id/id_radio_solved" />
+            <RadioButton
+                android:text="@string/not_solved"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/id_radio_not_solved" />
         </RadioGroup>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/text_categories"
-        android:textColor="@color/colorPrimary"
-        android:layout_marginTop="15dp"
-        />
+        <TextView
+            android:text="@string/text_categories"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorPrimary"
+            android:layout_marginTop="15dp" />
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/id_rgroup_ctgs"
+            android:checkedButton="@+id/id_radio_select_ctg_all">
+            <RadioButton
+                android:text="@string/all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:id="@+id/id_radio_select_ctg_all" />
+            <RadioButton
+                android:text="@string/select"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:id="@+id/id_radio_select_ctg_custom" />
+        </RadioGroup>
 
-    <ListView
-        android:layout_width="match_parent"
-        android:id="@+id/id_lv_filter_ctgs"
-        android:layout_height="wrap_content" />
-</LinearLayout>
+        <TextView
+            android:paddingBottom="5dp"
+            android:paddingLeft="6dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@drawable/link"
+            android:id="@+id/id_tv_addcategory" />
+
+        <!--user_id-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/incidents"
+            android:layout_marginTop="15dp"
+            android:textColor="@color/colorPrimary"
+            />
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/id_rgroup_users"
+            android:checkedButton="@+id/id_radio_from_all">
+            <RadioButton
+                android:text="@string/all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:id="@+id/id_radio_from_all" />
+            <RadioButton
+                android:text="@string/my_incidents"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:id="@+id/id_radio_from_me" />
+        </RadioGroup>
+
+    </LinearLayout>
+</ScrollView>

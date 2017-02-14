@@ -40,6 +40,7 @@
     <string name="title_activity_login">Вход</string>
     <string name="close">Закрыть</string>
     <string name="my_account">Личный кабинет</string>
+    <string name="incidents">Сообщения</string>
     <string name="my_incidents">Мои сообщения</string>
     <string name="logout">Выйти</string>
     <string name="menu">Меню</string>
@@ -51,7 +52,12 @@
     <string name="news_link">Ссылка на новость (необязательно)</string>
     <string name="video_link">Ссылка на видео (необязательно)</string>
     <string name="add_image">Добавить фото</string>
-    <string name="error_loading">Произошла ошибка, перезагрузите приложение</string>
+    <string name="error_happened">Произошла ошибка</string>
+    <string name="reload">Перезагрузить</string>
+    <string name="comments">Комментарии</string>
+    <string name="add_comment">Довабить комментарий</string>
+    <string name="rating">Достоверность:</string>
+    <string name="no_result">Ничего не найдено</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>

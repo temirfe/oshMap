@@ -2,16 +2,17 @@ package kg.prosoft.oshmapreport;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -24,45 +25,49 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 public class FilterActivity extends Activity {
 
-    /*RadioButton radio_all;
-    RadioButton radio_solved;
-    RadioButton radio_not_solved;*/
     RadioGroup radio_group_verify;
-    ListView lv_filter_ctgs;
+    RadioGroup radio_group_ctgs;
+    RadioGroup radio_group_users;
     EditText et_text_search;
     public HashMap<Integer, Categories> ctgMap;
-    CategoriesAdapter adapter;
-    List<Categories> mCategoriesList;
     ArrayList<Integer> selectedCtgs;
     String received_verify;
     String received_text;
+    String received_user;
     Intent received_intent;
+    public TextView tv_addcategory;
+    Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_filter);
 
+        activity=this;
         ActionBar actionBar = getActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayShowHomeEnabled(false);
         }
+        //prevent keyboard appearing onStart
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         et_text_search=(EditText) findViewById(R.id.id_et_text_search);
-
-        lv_filter_ctgs=(ListView) findViewById(R.id.id_lv_filter_ctgs);
 
         received_intent=getIntent();
         received_verify=received_intent.getStringExtra("verify");
         received_text=received_intent.getStringExtra("received_text");
+        received_user=received_intent.getStringExtra("show_from");
         selectedCtgs =received_intent.getIntegerArrayListExtra("selectedCtgs");
         radio_group_verify=(RadioGroup) findViewById(R.id.id_rgroup_verify);
+        radio_group_ctgs=(RadioGroup) findViewById(R.id.id_rgroup_ctgs);
+        radio_group_ctgs.setOnCheckedChangeListener(checkListener);
+        radio_group_users=(RadioGroup) findViewById(R.id.id_rgroup_users);
 
         if(received_verify!=null){
             if(received_verify.equals("0")){
@@ -72,21 +77,83 @@ public class FilterActivity extends Activity {
                 radio_group_verify.check(R.id.id_radio_solved);
             }
         }
+        if(received_user!=null && received_user.equals("me")){
+            radio_group_users.check(R.id.id_radio_from_me);
+        }
 
         if(received_text!=null){
             et_text_search.setText(received_text);
         }
 
-        mCategoriesList = new ArrayList<Categories>();
+        ctgMap=new HashMap<Integer, Categories>();
+        requestCategories(ctgMap);
 
-        requestCategories();
+        tv_addcategory=(TextView)findViewById(R.id.id_tv_addcategory);
+        tv_addcategory.setOnClickListener(ctgClick);
+        listSelectedCtgs();
     }
 
-    public void requestCategories(){
-        CategoriesCache cachedCtgs = new CategoriesCache().getObject(this);
+    View.OnClickListener ctgClick = new View.OnClickListener(){
+        @Override
+        public void onClick(View v){
+            openSelectCtg();
+        }
+    };
+
+    public void openSelectCtg(){
+        Intent ctg_intent=new Intent(activity,SelectCategoryActivity.class);
+        ctg_intent.putExtra("already",selectedCtgs);
+        ctg_intent.putExtra("categories",ctgMap);
+        startActivityForResult(ctg_intent,1);
+    }
+
+    RadioGroup.OnCheckedChangeListener checkListener = new RadioGroup.OnCheckedChangeListener()
+    {
+        @Override
+        public void onCheckedChanged(RadioGroup group, int checkedId)
+        {
+            switch(checkedId)
+            {
+                case R.id.id_radio_select_ctg_all:
+                    selectedCtgs.clear();
+                    tv_addcategory.setText("");
+                    break;
+                case R.id.id_radio_select_ctg_custom:
+                    openSelectCtg();
+                    break;
+            }
+        }
+    };
+
+    public void listSelectedCtgs(){
+        int selectedCount=selectedCtgs.size();
+        if(selectedCount!=0){
+            List<String> strings = new LinkedList<>();
+            for (int ctg : selectedCtgs)
+            {
+                Categories ctgO= ctgMap.get(ctg);
+                strings.add(ctgO.getTitle());
+            }
+
+            String selected=TextUtils.join("\n", strings);
+            selected=getResources().getString(R.string.selected)+"\n"+selected;
+            tv_addcategory.setText(selected);
+            radio_group_ctgs.setOnCheckedChangeListener (null);
+            radio_group_ctgs.check(R.id.id_radio_select_ctg_custom);
+            radio_group_ctgs.setOnCheckedChangeListener(checkListener);
+        }
+        else
+            tv_addcategory.setText("");
+    }
+
+    public void requestCategories(final HashMap<Integer, Categories> ctgMap){
+        CategoriesCache cachedCtgs = new CategoriesCache().getObject(activity);
         if(cachedCtgs!= null)
         {
-            mCategoriesList=cachedCtgs.getCategories();
+            for(Categories ctg : cachedCtgs.getCategories()){
+                int id=ctg.getId();
+                ctgMap.put(id,ctg);
+            }
         }
         else{
             String uri = String.format("http://api.temirbek.com/categories");
@@ -94,7 +161,6 @@ public class FilterActivity extends Activity {
             Response.Listener<JSONArray> listener = new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray response) {
-                    mCategoriesList=new ArrayList<>();
                     try{
                         for(int i=0; i < response.length(); i++){
                             JSONObject jsonObject = response.getJSONObject(i);
@@ -102,20 +168,46 @@ public class FilterActivity extends Activity {
                             String title=jsonObject.getString("category_title");
                             String image=jsonObject.getString("category_image");
 
-                            mCategoriesList.add(new Categories(id, title,image));
+                            Categories categories = new Categories(id, title,image);
+                            ctgMap.put(id,categories);
                         }
-                        //adapter.notifyDataSetChanged();
 
                     }catch(JSONException e){e.printStackTrace();}
                 }
             };
 
             JsonArrayRequest volReq = new JsonArrayRequest(Request.Method.GET, uri, null, listener,null);
-            MyVolley.getInstance(this).addToRequestQueue(volReq);
+            MyVolley.getInstance(activity).addToRequestQueue(volReq);
         }
+    }
 
-        adapter = new CategoriesAdapter(this,mCategoriesList,selectedCtgs);
-        lv_filter_ctgs.setAdapter(adapter);
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (data == null) {return;}
+        if(requestCode==1 && resultCode==RESULT_OK){ //selected categories
+            selectedCtgs = data.getIntegerArrayListExtra("ctg1");
+            int selectedCount=selectedCtgs.size();
+            if(selectedCount!=0){
+                List<String> strings = new LinkedList<>();
+                for (int ctg : selectedCtgs)
+                {
+                    Categories ctgO= ctgMap.get(ctg);
+                    strings.add(ctgO.getTitle());
+                }
+                String selected=TextUtils.join("\n", strings);
+                selected=getResources().getString(R.string.selected)+"\n"+selected;
+                tv_addcategory.setText(selected);
+            }
+            else
+            {
+
+                radio_group_ctgs.setOnCheckedChangeListener (null);
+                radio_group_ctgs.check(R.id.id_radio_select_ctg_all);
+                radio_group_ctgs.setOnCheckedChangeListener(checkListener);
+                tv_addcategory.setText("");
+            }
+        }
     }
 
     @Override
@@ -141,7 +233,8 @@ public class FilterActivity extends Activity {
     protected void done(){
         Intent intent= new Intent();
         int verify=radio_group_verify.getCheckedRadioButtonId();
-        String ver;
+        int show_mine=radio_group_users.getCheckedRadioButtonId();
+        String ver, from;
         switch(verify){
             case R.id.id_radio_all:
                 ver="all";
@@ -155,8 +248,19 @@ public class FilterActivity extends Activity {
             default: ver="all";
 
         }
+        switch(show_mine){
+            case R.id.id_radio_from_all:
+                from="all";
+                break;
+            case R.id.id_radio_from_me:
+                from="me";
+                break;
+            default: from="all";
+
+        }
         intent.putExtra("verify", ver);
-        intent.putExtra("ctg1", adapter.getSelectedCtgs());
+        intent.putExtra("show_from", from);
+        intent.putExtra("ctg1", selectedCtgs);
         intent.putExtra("query_text", et_text_search.getText().toString());
         setResult(RESULT_OK, intent);
         finish();
