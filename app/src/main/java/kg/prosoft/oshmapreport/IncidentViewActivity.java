@@ -3,6 +3,8 @@ package kg.prosoft.oshmapreport;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -18,6 +20,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -70,6 +73,7 @@ public class IncidentViewActivity extends Activity {
     public ImageButton ibtn_rate_down;
     public int user_id;
     public int incident_id;
+    public RelativeLayout rl_map;
     String from;
     ProgressBar pb;
     Activity activity;
@@ -77,6 +81,8 @@ public class IncidentViewActivity extends Activity {
     boolean saveCredentials;
     int rating;
     int new_rating;
+    public double lat;
+    public double lng;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,6 +148,35 @@ public class IncidentViewActivity extends Activity {
         getComments(incident_id);
         getRatings(incident_id);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+    }
+
+    protected void showMapFrame(){
+        FrameMapFragment fmfragment=new FrameMapFragment();
+        Bundle bundle = new Bundle();
+        bundle.putDouble("lat", lat);
+        bundle.putDouble("lng", lng);
+        Log.i("LATLNG", "lat"+lat+" lng"+lng);
+        fmfragment.setArguments(bundle);
+        putFragment(fmfragment);
+
+        rl_map=(RelativeLayout)findViewById(R.id.id_rl_map);
+        Button button = new Button(this);
+        button.getBackground().setAlpha(0);
+        button.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT));
+        rl_map.addView(button);
+
+        button.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), MapsActivity.class);
+                intent.putExtra("lat",lat);
+                intent.putExtra("lng",lng);
+                startActivity(intent);
+            }
+        });
     }
 
     public void getRatings(final int id){
@@ -251,9 +286,9 @@ public class IncidentViewActivity extends Activity {
                     }
 
                     JSONObject location = jsonObject.getJSONObject("location");
-                    double lat=location.getDouble("latitude");
-                    double lng=location.getDouble("longitude");
-
+                    lat=location.getDouble("latitude");
+                    lng=location.getDouble("longitude");
+                    showMapFrame();
                     //int user_id = jsonObject.optInt("user_id",0);
                     //nt zoom = jsonObject.getInt("incident_zoom");
                     String text=jsonObject.getString("incident_description");
@@ -306,8 +341,15 @@ public class IncidentViewActivity extends Activity {
         ll_comments.setPadding(0,15,0,10);
     }
 
-    View.OnClickListener sendComment = new View.OnClickListener()
-    {
+    protected void putFragment(Fragment frag){
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.replace(R.id.id_fl_map, frag);
+        //ft.addToBackStack(null);
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+        ft.commit();
+    }
+
+    View.OnClickListener sendComment = new View.OnClickListener() {
         public void onClick(View v)
         {
             String comment = et_comment_input.getText().toString();

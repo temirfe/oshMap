@@ -510,8 +510,8 @@ public class AddReportFragment extends Fragment implements View.OnClickListener 
     public void showImageUploadSelect(){
 
         final Item[] items = {
-                new Item("Фото", android.R.drawable.ic_menu_camera),
-                new Item("Галерея", android.R.drawable.ic_menu_gallery),
+                new Item(getResources().getString(R.string.camera), android.R.drawable.ic_menu_camera),
+                new Item(getResources().getString(R.string.gallery), android.R.drawable.ic_menu_gallery),
         };
 
         ListAdapter adapter = new ArrayAdapter<Item>(
