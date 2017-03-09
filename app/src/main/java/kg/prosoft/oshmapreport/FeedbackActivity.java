@@ -92,7 +92,7 @@ public class FeedbackActivity extends Activity {
             progress.setTitle(getResources().getString(R.string.sending));
             progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
             progress.show();
-            String url="http://api.temirbek.com/site/feedback";
+            String url="http://map.oshcity.kg/basic/site/feedback";
             Response.Listener<String> listener = new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {

@@ -68,6 +68,7 @@ public class IncidentViewActivity extends Activity {
     public LinearLayout ll_comments;
     public TextView tv_descripton;
     public TextView tv_rating;
+    public TextView tv_not_active;
     public Button btn_submit_comment;
     public ImageButton ibtn_rate_up;
     public ImageButton ibtn_rate_down;
@@ -103,6 +104,7 @@ public class IncidentViewActivity extends Activity {
 
         pb = (ProgressBar)findViewById(R.id.progressBarView);
         tv_title=(TextView)findViewById(R.id.id_tv_title);
+        tv_not_active=(TextView)findViewById(R.id.id_tv_not_active);
 
         tv_location_name=(TextView)findViewById(R.id.id_tv_location_name);
         tv_date=(TextView)findViewById(R.id.id_tv_date);
@@ -180,7 +182,7 @@ public class IncidentViewActivity extends Activity {
     }
 
     public void getRatings(final int id){
-        String uri="http://api.temirbek.com/ratings?incident_id="+id;
+        String uri="http://map.oshcity.kg/basic/ratings?incident_id="+id;
         StringRequest volReq = new StringRequest(Request.Method.GET, uri,
                 new Response.Listener<String>() {
                     @Override
@@ -203,7 +205,7 @@ public class IncidentViewActivity extends Activity {
     }
 
     public void getComments(final int id){
-        final String uri = "http://api.temirbek.com/comments?incident_id="+id;
+        final String uri = "http://map.oshcity.kg/basic/comments?incident_id="+id;
 
         Response.Listener<JSONArray> listener = new Response.Listener<JSONArray>() {
             @Override
@@ -229,7 +231,7 @@ public class IncidentViewActivity extends Activity {
     }
 
     public void getIncident(final int id){
-        String uri = String.format("http://api.temirbek.com/incidents/%1$s",id);
+        String uri = String.format("http://map.oshcity.kg/basic/incidents/%1$s",id);
 
         Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
             @Override
@@ -256,10 +258,9 @@ public class IncidentViewActivity extends Activity {
                         }
                     }
 
-
                     if(jsonObject.has("media")){
                         JSONArray media = jsonObject.getJSONArray("media");
-                        String imgUrl="http://api.temirbek.com/uploads";
+                        String imgUrl="http://map.oshcity.kg/basic/uploads";
                         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(100, 100);
                         lp.setMargins(0, 0, 10, 10);
                         for(int i=0; i < media.length(); i++){
@@ -288,12 +289,20 @@ public class IncidentViewActivity extends Activity {
                     JSONObject location = jsonObject.getJSONObject("location");
                     lat=location.getDouble("latitude");
                     lng=location.getDouble("longitude");
+                    //Log.i("LOCATION","lat"+lat+" lng"+lng);
                     showMapFrame();
                     //int user_id = jsonObject.optInt("user_id",0);
                     //nt zoom = jsonObject.getInt("incident_zoom");
                     String text=jsonObject.getString("incident_description");
                     //String date=jsonObject.getString("incident_date");
                     int verified=jsonObject.getInt("incident_verified");
+                    int active=jsonObject.getInt("incident_active");
+                    if(active==0){
+                        LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        llp.setMargins(0, 0, 10, 0); // llp.setMargins(left, top, right, bottom);
+                        tv_not_active.setLayoutParams(llp);
+                        tv_not_active.setVisibility(View.VISIBLE);
+                    }
                     String status; int statusColor;
                     if(verified==1){status=getString(R.string.incident_fixed); statusColor= ContextCompat.getColor(activity, R.color.green);}
                     else{status=getString(R.string.incident_not_fixed); statusColor=Color.RED;}
@@ -380,7 +389,7 @@ public class IncidentViewActivity extends Activity {
     };
 
     public void submitComment(final String name, final String email, final String comment, final int inc_id){
-        String url="http://api.temirbek.com/comments";
+        String url="http://map.oshcity.kg/basic/comments";
         Response.Listener<String> listener = new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -479,7 +488,7 @@ public class IncidentViewActivity extends Activity {
             }
             tv_rating.setText(Integer.toString(new_rating));
 
-            String url="http://api.temirbek.com/ratings";
+            String url="http://map.oshcity.kg/basic/ratings";
             Response.Listener<String> listener = new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {

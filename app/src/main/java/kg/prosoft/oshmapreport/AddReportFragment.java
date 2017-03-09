@@ -3,11 +3,14 @@ package kg.prosoft.oshmapreport;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -15,6 +18,7 @@ import android.os.Bundle;
 import android.app.Fragment;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
@@ -29,6 +33,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -64,6 +69,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import kg.prosoft.oshmapreport.utils.FirebaseConfig;
+
 import static android.R.attr.bitmap;
 import static android.app.Activity.RESULT_OK;
 
@@ -71,7 +78,7 @@ import static android.app.Activity.RESULT_OK;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AddReportFragment extends Fragment implements View.OnClickListener {
+public class AddReportFragment extends Fragment implements View.OnClickListener, FrameMapFragment.ParentFrag {
 
 
     private static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 100;
@@ -85,6 +92,8 @@ public class AddReportFragment extends Fragment implements View.OnClickListener 
     public TextView btn_add_category;
     public Button btn_submit_report;
     public TextView tv_addcategory;
+    public TextView tv_lat;
+    public TextView tv_lng;
 
     public EditText et_title;
     public EditText et_description;
@@ -116,6 +125,8 @@ public class AddReportFragment extends Fragment implements View.OnClickListener 
     Context activity;
     private Bitmap bitmap;
     private int user_id;
+    public RelativeLayout rl_map;
+    View rootView;
 
     public AddReportFragment() {
         // Required empty public constructor
@@ -125,15 +136,16 @@ public class AddReportFragment extends Fragment implements View.OnClickListener 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
+       /* if (savedInstanceState != null) {
             //et_title.setText(savedInstanceState.getString("title"));
-        }
+        }*/
         activity=getActivity();
         context=activity.getApplicationContext();
-        session = new SessionManager(context);
         // Inflate the layout for this fragment
-        View rootView=inflater.inflate(R.layout.fragment_add_report, container, false);
+        rootView=inflater.inflate(R.layout.fragment_add_report, container, false);
 
+
+        session = new SessionManager(context);
         tv_addcategory=(TextView)rootView.findViewById(R.id.id_tv_addcategory);
         //tv_addcategory.setOnClickListener(this);
 
@@ -145,6 +157,8 @@ public class AddReportFragment extends Fragment implements View.OnClickListener 
         et_address=(EditText)rootView.findViewById(R.id.id_et_address);
         et_news_link=(EditText)rootView.findViewById(R.id.id_et_news_link);
         et_video_link=(EditText)rootView.findViewById(R.id.id_et_video_link);
+        tv_lat=(TextView)rootView.findViewById(R.id.id_tv_lat);
+        tv_lng=(TextView)rootView.findViewById(R.id.id_tv_lng);
 
         tv_date=(TextView)rootView.findViewById(R.id.id_tv_date);
         tv_date.setOnClickListener(this);
@@ -189,8 +203,26 @@ public class AddReportFragment extends Fragment implements View.OnClickListener 
             user_id = session.getUserId();
         }
 
+
         return rootView;
     }
+
+    /*@Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }*/
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        showMapFrame();
+    }
+
+   /* @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+    }*/
 
     @Override
     public void onClick(View v) {
@@ -230,8 +262,8 @@ public class AddReportFragment extends Fragment implements View.OnClickListener 
         final String video_link = et_video_link.getText().toString();
         final String date = tv_date.getText().toString();
         final String time = tv_time.getText().toString();
-        final String latitude="40.49234";
-        final String longitude="72.8356";
+        final String latitude = tv_lat.getText().toString();
+        final String longitude = tv_lng.getText().toString();
 
         if(title.trim().equals("")){
             et_title.setError(getResources().getString(R.string.required));
@@ -267,6 +299,10 @@ public class AddReportFragment extends Fragment implements View.OnClickListener 
             Toast.makeText(context, getResources().getString(R.string.ctg_required), Toast.LENGTH_SHORT).show();
             allGood=false;
         }
+        if(latitude.trim().equals("0.0")){
+            Toast.makeText(context, getResources().getString(R.string.set_location), Toast.LENGTH_SHORT).show();
+            allGood=false;
+        }
 
         if(allGood){
 
@@ -277,7 +313,7 @@ public class AddReportFragment extends Fragment implements View.OnClickListener 
             progress.setTitle(getResources().getString(R.string.sending));
             progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
             progress.show();
-            String url="http://api.temirbek.com/incidents";
+            String url="http://map.oshcity.kg/basic/incidents";
             Response.Listener<String> listener = new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
@@ -286,7 +322,7 @@ public class AddReportFragment extends Fragment implements View.OnClickListener 
 
                         JSONObject obj = new JSONObject(response);
 
-                        Log.d("My App", obj.toString());
+                        //Log.d("My App", obj.toString());
 
                         try{
                             int id = obj.getInt("id");
@@ -319,11 +355,11 @@ public class AddReportFragment extends Fragment implements View.OnClickListener 
                             Object json = new JSONTokener(res).nextValue();
                             if (json instanceof JSONObject){
                                 JSONObject err = new JSONObject(res);
-                                Log.i("RESPONSE err 1", err.toString());
+                                //Log.i("RESPONSE err 1", err.toString());
                             }
                             else if (json instanceof JSONArray){
                                 JSONArray err = new JSONArray(res);
-                                Log.i("RESPONSE err 1", err.toString());
+                                //Log.i("RESPONSE err 1", err.toString());
                             }
                             progress.dismiss();
                             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
@@ -331,11 +367,11 @@ public class AddReportFragment extends Fragment implements View.OnClickListener 
                         } catch (UnsupportedEncodingException e1) {
                             // Couldn't properly decode data to string
                             e1.printStackTrace();
-                            Log.i("RESPONSE err 2", "here");
+                            //Log.i("RESPONSE err 2", "here");
                         } catch (JSONException e2) {
                             // returned data is not JSONObject?
                             e2.printStackTrace();
-                            Log.i("RESPONSE err 3", "here");
+                            //Log.i("RESPONSE err 3", "here");
                         }
                     }
                 }
@@ -370,6 +406,14 @@ public class AddReportFragment extends Fragment implements View.OnClickListener 
                         im++;
                     }
                     params.put("incident_mode","5"); //5 is android
+
+                    SharedPreferences pref = context.getSharedPreferences(FirebaseConfig.SHARED_PREF, 0);
+                    String phoneFirebaseId = pref.getString("regId", null);
+                    if(phoneFirebaseId!=null){
+                        params.put("regid",phoneFirebaseId);
+                    }
+
+                    //Log.e("FIRE ID", "Firebase reg id: " + phoneFirebaseId);
 
                     return params;
                 }
@@ -422,6 +466,18 @@ public class AddReportFragment extends Fragment implements View.OnClickListener 
             previewImage(filePath);
 
         }
+
+        else if(requestCode==240 && resultCode==RESULT_OK){ //get map location
+            lat=data.getDoubleExtra("new_lat",0);
+            lng=data.getDoubleExtra("new_lng",0);
+            String new_lat_str=Double.toString(lat);
+            String new_lng_str=Double.toString(lng);
+            tv_lat.setText(new_lat_str);
+            tv_lng.setText(new_lng_str);
+
+            Log.i("RESULT", "lat:"+new_lat_str+" lng:"+new_lng_str);
+
+        }
     }
 
     public void previewImage(String path){
@@ -450,7 +506,7 @@ public class AddReportFragment extends Fragment implements View.OnClickListener 
             }
         }
         else{
-            String uri = String.format("http://api.temirbek.com/categories");
+            String uri = String.format("http://map.oshcity.kg/basic/categories");
 
             Response.Listener<JSONArray> listener = new Response.Listener<JSONArray>() {
                 @Override
@@ -598,5 +654,65 @@ public class AddReportFragment extends Fragment implements View.OnClickListener 
         }
 
         return mediaFile;
+    }
+
+    public void showMapFrame(){
+        FrameMapFragment fmfragment=new FrameMapFragment();
+        Bundle bundle = new Bundle();
+        bundle.putDouble("lat", lat);
+        bundle.putDouble("lng", lng);
+        Log.i("Temir LATLNG", "lat"+lat+" lng"+lng);
+        fmfragment.setArguments(bundle);
+        putFragment(fmfragment);
+
+        rl_map=(RelativeLayout)rootView.findViewById(R.id.id_rl_add_map);
+        Button button = new Button(activity);
+        button.getBackground().setAlpha(0);
+        button.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT));
+        rl_map.addView(button);
+
+        button.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), SetLocationActivity.class);
+                intent.putExtra("lat",lat);
+                intent.putExtra("lng",lng);
+                startActivityForResult(intent,240);
+            }
+        });
+    }
+
+    protected void putFragment(FrameMapFragment frag){
+        FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+        ft.replace(R.id.id_fl_add_map, frag, "FrameMap");
+        //ft.addToBackStack(null);
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+        ft.commit();
+    }
+
+    @Override
+    public void setParent()
+    {
+        FragmentManager fragmentManager = getChildFragmentManager();
+        FrameMapFragment nestFrag = (FrameMapFragment)fragmentManager.findFragmentByTag("FrameMap");
+        //Tag of your fragment which you should use when you add
+
+        if(nestFrag != null)
+        {
+            // your some other frag need to provide some data back based on views.
+            lat = nestFrag.mylat;
+            lng = nestFrag.mylng;
+            if(lat!=0.0){
+                Log.i("mylat good",""+lat);
+                tv_lat.setText(Double.toString(lat));
+                tv_lng.setText(Double.toString(lng));
+            }
+            else{
+                Log.i("mylat bad",""+lat);}
+            // it can be a string, or int, or some custom java object.
+        }
     }
 }

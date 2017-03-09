@@ -126,21 +126,23 @@ public class FilterActivity extends Activity {
     };
 
     public void listSelectedCtgs(){
-        int selectedCount=selectedCtgs.size();
-        if(selectedCount!=0){
-            List<String> strings = new LinkedList<>();
-            for (int ctg : selectedCtgs)
-            {
-                Categories ctgO= ctgMap.get(ctg);
-                strings.add(ctgO.getTitle());
-            }
+        if(selectedCtgs!=null){
+            int selectedCount=selectedCtgs.size();
+            if(selectedCount!=0){
+                List<String> strings = new LinkedList<>();
+                for (int ctg : selectedCtgs)
+                {
+                    Categories ctgO= ctgMap.get(ctg);
+                    strings.add(ctgO.getTitle());
+                }
 
-            String selected=TextUtils.join("\n", strings);
-            selected=getResources().getString(R.string.selected)+"\n"+selected;
-            tv_addcategory.setText(selected);
-            radio_group_ctgs.setOnCheckedChangeListener (null);
-            radio_group_ctgs.check(R.id.id_radio_select_ctg_custom);
-            radio_group_ctgs.setOnCheckedChangeListener(checkListener);
+                String selected=TextUtils.join("\n", strings);
+                selected=getResources().getString(R.string.selected)+"\n"+selected;
+                tv_addcategory.setText(selected);
+                radio_group_ctgs.setOnCheckedChangeListener (null);
+                radio_group_ctgs.check(R.id.id_radio_select_ctg_custom);
+                radio_group_ctgs.setOnCheckedChangeListener(checkListener);
+            }
         }
         else
             tv_addcategory.setText("");
@@ -156,7 +158,7 @@ public class FilterActivity extends Activity {
             }
         }
         else{
-            String uri = String.format("http://api.temirbek.com/categories");
+            String uri = String.format("http://map.oshcity.kg/basic/categories");
 
             Response.Listener<JSONArray> listener = new Response.Listener<JSONArray>() {
                 @Override
@@ -258,6 +260,7 @@ public class FilterActivity extends Activity {
             default: from="all";
 
         }
+        Log.i("FROM",from);
         intent.putExtra("verify", ver);
         intent.putExtra("show_from", from);
         intent.putExtra("ctg1", selectedCtgs);

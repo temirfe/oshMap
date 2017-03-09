@@ -103,7 +103,7 @@ public class RegisterActivity extends Activity {
             progress.setTitle(getResources().getString(R.string.register));
             progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
             progress.show();
-            String url="http://api.temirbek.com/omapusers";
+            String url="http://map.oshcity.kg/basic/omapusers";
             Response.Listener<String> listener = new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
@@ -114,7 +114,7 @@ public class RegisterActivity extends Activity {
                             JSONObject obj = new JSONObject(response);
                             try{
                                 int id = obj.getInt("id");
-                                Log.i("RESPONSE id", " "+id);
+                                //Log.i("RESPONSE id", " "+id);
                                 if(id!=0){
                                     String name = obj.getString("name");
                                     String access_token = obj.getString("access_token");
@@ -128,10 +128,6 @@ public class RegisterActivity extends Activity {
 
                             }catch(JSONException e){e.printStackTrace();}
                         }
-                        else if (json instanceof JSONArray){
-                            Log.d("RESPONSE", "isArray");
-                        }
-                        else{Log.d("RESPONSE", "isString");}
 
                     } catch (Throwable t) {
                         Log.e("My App", "Could not parse malformed JSON: \"" + response + "\"");
@@ -162,15 +158,15 @@ public class RegisterActivity extends Activity {
                             }
                             progress.dismiss();
 
-                            Log.i("RESPONSE err 1", arr.toString());
+                            //Log.i("RESPONSE err 1", arr.toString());
                         } catch (UnsupportedEncodingException e1) {
                             // Couldn't properly decode data to string
                             e1.printStackTrace();
-                            Log.i("RESPONSE err 2", "here");
+                            //Log.i("RESPONSE err 2", "here");
                         } catch (JSONException e2) {
                             // returned data is not JSONObject?
                             e2.printStackTrace();
-                            Log.i("RESPONSE err 3", "here");
+                            //Log.i("RESPONSE err 3", "here");
                         }
                     }
                 }

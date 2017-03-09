@@ -136,7 +136,7 @@ public class FeedsActivity extends Activity {
 
     public void populateList(int page){
 
-        String uri = "http://api.temirbek.com/feeds?page="+page;
+        String uri = "http://map.oshcity.kg/basic/feeds?page="+page;
 
         Response.Listener<JSONArray> listener = new Response.Listener<JSONArray>() {
             @Override

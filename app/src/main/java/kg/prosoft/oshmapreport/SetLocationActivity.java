@@ -24,20 +24,23 @@ import android.Manifest;
 import android.location.Location;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback,
+public class SetLocationActivity extends AppCompatActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener{
+        GoogleApiClient.OnConnectionFailedListener,
+        GoogleMap.OnMarkerDragListener,
+        GoogleMap.OnMapClickListener {
 
     private GoogleMap mMap;
 
     // Create a LatLngBounds that includes Osh. (sw,ne)
     private LatLngBounds OSH = new LatLngBounds(new LatLng(40.479966, 72.754476), new LatLng(40.565694, 72.852959));
-    //private LatLngBounds BISHKEK = new LatLngBounds(new LatLng(42.790932,74.5002453), new LatLng(42.92415,74.6766403));
+    //private LatLngBounds OSH = new LatLngBounds(new LatLng(42.790932,74.5002453), new LatLng(42.92415,74.6766403)); //it's actually bishkek
 
-    protected static final String TAG = "MapsActivity";
+    protected static final String TAG = "SetLocationActivity";
     public Marker myMarker;
 
     /**
@@ -53,6 +56,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public double lat;
     public double lng;
     public boolean marker_already=false;
+
+    public double new_lat;
+    public double new_lng;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,8 +84,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         Intent intent=getIntent();
-        lat=intent.getDoubleExtra("lat",0);
-        lng=intent.getDoubleExtra("lng",0);
+        lat=intent.getDoubleExtra("lat",0.0);
+        lng=intent.getDoubleExtra("lng",0.0);
 
     }
 
@@ -98,17 +104,31 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_maps, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             // Respond to the action bar's Up/Home button
             case android.R.id.home:
-                finish();
+                done();
                 return true;
-           /* case R.id.action_back:
-                finish();
-                return true;*/
+            case R.id.action_back:
+                done();
+                return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    protected void done(){
+        Intent intent= new Intent();
+        intent.putExtra("new_lat", new_lat);
+        intent.putExtra("new_lng", new_lng);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
     /**
@@ -126,7 +146,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         //LatLng bishkek = new LatLng(42.8742589,74.6131682);
         LatLng myLocation=new LatLng(40.51719,72.8037146); //Osh city hall
 
-        if(lat!=0 && lng!=0){
+        if(lat!=0.0 && lng!=0.0){
             myLocation=new LatLng(lat, lng);
             myMarker=mMap.addMarker(new MarkerOptions().position(myLocation).draggable(true));
             marker_already=true;
@@ -137,6 +157,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.setLatLngBoundsForCameraTarget(OSH);
+
+        mMap.setOnMapClickListener(this);
+        mMap.setOnMarkerDragListener(this);
     }
 
 
@@ -186,5 +209,30 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
     }
 
+    @Override
+    public void onMapClick(LatLng point) {
+        //mTapTextView.setText("tapped, point=" + point);
+        if(myMarker!=null){myMarker.remove();}
+        myMarker=mMap.addMarker(new MarkerOptions().position(point).draggable(true));
+        new_lat=point.latitude;
+        new_lng=point.longitude;
+    }
 
+    @Override
+    public void onMarkerDragStart(Marker marker) {
+
+    }
+
+    @Override
+    public void onMarkerDrag(Marker marker) {
+
+    }
+
+    @Override
+    public void onMarkerDragEnd(Marker marker) {
+        LatLng newpos=marker.getPosition();
+        new_lat=newpos.latitude;
+        new_lng=newpos.longitude;
+        Log.i("Dragged to:", ""+newpos);
+    }
 }

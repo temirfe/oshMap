@@ -2,23 +2,24 @@ package kg.prosoft.oshmapreport;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,7 +27,9 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Locale;
+
+import kg.prosoft.oshmapreport.utils.FirebaseConfig;
+import kg.prosoft.oshmapreport.utils.NotificationUtils;
 
 public class MainActivity extends Activity {
 
@@ -38,6 +41,7 @@ public class MainActivity extends Activity {
     RichBottomNavigationView botNav;
     String from;
     Bundle fromBundle;
+    private BroadcastReceiver mRegistrationBroadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,11 +54,16 @@ public class MainActivity extends Activity {
             setContentView(R.layout.activity_main);
         }
 
+        //bottomNav
+        botNav = (RichBottomNavigationView) findViewById(R.id.bottom_navigation);
+
         Intent intent=getIntent();
         from =intent.getStringExtra("from");
         if(from==null){from="";}
         if(from.equals("login")){
             putFragment(menuFrag);
+            botNav.getMenu().findItem(R.id.likes_item).setChecked(false);
+            botNav.getMenu().findItem(R.id.likes_item).setChecked(true);
         }
         else{
             putFragment(homefrag);
@@ -64,12 +73,10 @@ public class MainActivity extends Activity {
         getCategorized();
 
         //hide icon
-        if(getActionBar()!=null){
+        /*if(getActionBar()!=null){
             getActionBar().setDisplayShowHomeEnabled(false);
-        }
+        }*/
 
-        //bottomNav
-        botNav = (RichBottomNavigationView) findViewById(R.id.bottom_navigation);
 
         botNav.setOnNavigationItemSelectedListener(
                 new RichBottomNavigationView.OnNavigationItemSelectedListener() {
@@ -95,6 +102,47 @@ public class MainActivity extends Activity {
                         return true;
                     }
                 });
+
+        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                // checking for type intent filter
+                if (intent.getAction().equals(FirebaseConfig.REGISTRATION_COMPLETE)) {
+                    // gcm successfully registered
+                    // now subscribe to `global` topic to receive app wide notifications
+                    FirebaseMessaging.getInstance().subscribeToTopic(FirebaseConfig.TOPIC_GLOBAL);
+
+                } else if (intent.getAction().equals(FirebaseConfig.PUSH_NOTIFICATION)) {
+                    // new push notification is received
+
+                    String message = intent.getStringExtra("message");
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.push_notification)+" " + message, Toast.LENGTH_LONG).show();
+                }
+            }
+        };
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // register GCM registration complete receiver
+        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
+                new IntentFilter(FirebaseConfig.REGISTRATION_COMPLETE));
+
+        // register new push message receiver
+        // by doing this, the activity will be notified each time a new message arrives
+        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
+                new IntentFilter(FirebaseConfig.PUSH_NOTIFICATION));
+
+        // clear the notification area when the app is opened
+        NotificationUtils.clearNotifications(getApplicationContext());
+    }
+
+    @Override
+    protected void onPause() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
+        super.onPause();
     }
 
     protected void putFragment(Fragment frag){
@@ -149,7 +197,7 @@ public class MainActivity extends Activity {
 
         if(cachedCtgs == null)
         {
-            String uri = String.format("http://api.temirbek.com/categories");
+            String uri = String.format("http://map.oshcity.kg/basic/categories");
 
             Response.Listener<JSONArray> listener = new Response.Listener<JSONArray>() {
                 @Override

@@ -33,7 +33,6 @@ import java.util.List;
  */
 public class ReportsFragment extends Fragment {
 
-    private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
     Context context;
@@ -44,6 +43,7 @@ public class ReportsFragment extends Fragment {
     public String show_from;
     ArrayList<Integer> selectedCtgs;
     SessionManager session;
+    int user_id;
 
     public ReportsFragment() {
         // Required empty public constructor
@@ -55,12 +55,33 @@ public class ReportsFragment extends Fragment {
                              Bundle savedInstanceState) {
         context=getActivity().getApplicationContext();
         session = new SessionManager(context);
+        user_id = session.getUserId();
+        //Log.i("ONCRV", "Start");
+
         // Inflate the layout for this fragment
         View layout= inflater.inflate(R.layout.fragment_reports, container, false);
         setHasOptionsMenu(true);
 
-        if(selectedCtgs==null){
-            selectedCtgs = new ArrayList<>();
+        mapFrag = new MapReportsFragment();
+        listFrag = new ListReportsFragment();
+
+        //if user clicked "My incidents" from menu
+        show_from="all";
+        String from="";
+        try {
+            from = getArguments().getString("from");
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+        if(from.equals("myIncidents") && user_id!=0){
+            show_from="me";
+            mapFrag.user_id=user_id;
+            listFrag.user_id=user_id;
+            //Log.i("USER ID", "SET TO "+user_id);
+        }else{
+            mapFrag.user_id=0;
+            listFrag.user_id=0;
+            //Log.i("USER ID", "SET TO 0");
         }
 
         viewPager = (ViewPager) layout.findViewById(R.id.viewpager);
@@ -69,25 +90,13 @@ public class ReportsFragment extends Fragment {
         tabLayout = (TabLayout) layout.findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
-        //if user clicked "My incidents" from menu
-        String from = getArguments().getString("from");
-        int user_id = session.getUserId();
-        if(from!=null && from.equals("myIncidents") && user_id!=0){
-            listFrag.user_id=user_id;
-            show_from="me";
-        }
-        else{
-            show_from="all";
-            Log.i("FAIL","id "+user_id+" from"+from);
-        }
+
 
         return layout;
     }
     private void setupViewPager(ViewPager viewPager) {
         ReportsTabAdapter adapter = new ReportsTabAdapter(getChildFragmentManager());
 
-        mapFrag = new MapReportsFragment();
-        listFrag = new ListReportsFragment();
         adapter.addFragment(mapFrag, "Карта");
         adapter.addFragment(listFrag, "Список");
         viewPager.setAdapter(adapter);
@@ -116,14 +125,11 @@ public class ReportsFragment extends Fragment {
             case R.id.action_open_filter:
                 //Intent intent = new Intent(this, InboxActivity.class);
                 //startActivity(intent);
-                if(listFrag.ctg!=0){
-                    selectedCtgs.add(listFrag.ctg);
-                }
-
                 Intent filter_intent=new Intent(context, FilterActivity.class);
                 filter_intent.putExtra("verify", verify);
-                Log.i("SHOW", show_from);
+
                 filter_intent.putExtra("show_from", show_from);
+                //Log.i("SHOW_FROM", "a "+show_from);
                 filter_intent.putExtra("received_text", received_text);
                 filter_intent.putExtra("selectedCtgs", selectedCtgs);
                 startActivityForResult(filter_intent, 123);
@@ -135,42 +141,64 @@ public class ReportsFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.i("ActRes","came here");
+        //Log.i("ActRes","came here");
         if (data == null) { Log.i("ActRes","null");  return;}
         if(requestCode==123){
 
             Uri.Builder builder = new Uri.Builder();
-            builder.scheme("http")
-                    .authority("api.temirbek.com")
-                    .appendPath("incidents");
+            builder.scheme("http").authority("map.oshcity.kg").appendPath("basic").appendPath("incidents");
+
+            Uri.Builder map_builder = new Uri.Builder();
+            map_builder.scheme("http").authority("map.oshcity.kg").appendPath("basic").appendPath("locations");
 
             verify = data.getStringExtra("verify");
-            if(verify.equals("0") || verify.equals("1")){
+            if(verify!=null && verify.equals("0") || verify!=null && verify.equals("1")){
                 builder.appendQueryParameter("verified", verify);
+                map_builder.appendQueryParameter("verified", verify);
             }
             show_from = data.getStringExtra("show_from");
-            if(show_from.equals("me")){
-                builder.appendQueryParameter("user_id", ""+session.getUserId());
+            if(show_from!=null && show_from.equals("me")){
+                //Log.i("SHOW_FROM",show_from);
+                builder.appendQueryParameter("user_id", ""+user_id);
+                map_builder.appendQueryParameter("user_id", ""+user_id);
+            }
+            else{
+                mapFrag.user_id=0;
+                listFrag.user_id=0;
+                //Log.i("ON USER ID", "SET TO 0");
             }
 
             received_text = data.getStringExtra("query_text");
             if(received_text!=null && !received_text.equals("")){
                 builder.appendQueryParameter("text", received_text);
+                map_builder.appendQueryParameter("text", received_text);
             }
 
             selectedCtgs = data.getIntegerArrayListExtra("ctg1");
-            int selectedCount=selectedCtgs.size();
-            if(selectedCount!=0){
-                for (int ctg : selectedCtgs)
-                {
-                    builder.appendQueryParameter("category_id[]", Integer.toString(ctg));
+            if(selectedCtgs!=null) {
+                int selectedCount = selectedCtgs.size();
+                if (selectedCount != 0) {
+                    for (int ctg : selectedCtgs) {
+                        builder.appendQueryParameter("category_id[]", Integer.toString(ctg));
+                        map_builder.appendQueryParameter("category_id[]", Integer.toString(ctg));
+                    }
+                } else {
+                    //Log.i("ActRes", "ctg is null");
                 }
             }
-            else{
-                Log.i("ActRes","ctg is null");
+
+            int ctgry = data.getIntExtra("ctg",0);
+            if(ctgry!=0){
+                builder.appendQueryParameter("category_id[]", Integer.toString(ctgry));
+                map_builder.appendQueryParameter("category_id[]", Integer.toString(ctgry));
+                if(selectedCtgs==null){
+                    selectedCtgs = new ArrayList<>();
+                }
+                selectedCtgs.add(ctgry);
             }
 
             listFrag.populateList(1,builder,true);
+            mapFrag.populateMap(map_builder);
         }
     }
 

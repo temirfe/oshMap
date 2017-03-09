@@ -61,6 +61,9 @@
     <string name="camera">Камера</string>
     <string name="gallery">Галерея</string>
     <string name="on_map">На карте</string>
+    <string name="set_location">Укажите на карте</string>
+    <string name="push_notification">Уведомление:</string>
+    <string name="not_active">Спасибо, сообщение было отправлено на рассмотрение. В случае необходимости, мы обязательно свяжемся с вами.</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
@@ -282,4 +285,5 @@
     <string name="style_label_default">Default</string>
     <string name="style_choose">Choose style</string>
     <string name="style_set_to">Style set to: %1$s</string>
+    <string name="title_activity_maps2">Map</string>
 </resources>

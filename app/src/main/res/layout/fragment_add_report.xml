@@ -97,6 +97,37 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/id_tv_addcategory" />
 
+            <TextView
+                android:text="@string/set_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"/>
+            <!--map frame-->
+            <RelativeLayout
+                android:layout_width="300dp"
+                android:layout_height="150dp"
+                android:layout_marginTop="7dp"
+                android:id="@+id/id_rl_add_map">
+                <FrameLayout
+                    android:id="@+id/id_fl_add_map"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentStart="true"
+                    >
+                </FrameLayout>
+            </RelativeLayout>
+           <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:id="@+id/id_tv_lat"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:id="@+id/id_tv_lng"/>
+
+
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -47,7 +47,7 @@ public class AboutActivity extends Activity {
     }
 
     public void getText(){
-        String uri="http://api.temirbek.com/site/about";
+        String uri="http://map.oshcity.kg/basic/site/about";
         StringRequest volReq = new StringRequest(Request.Method.GET, uri,
                 new Response.Listener<String>() {
                     @Override

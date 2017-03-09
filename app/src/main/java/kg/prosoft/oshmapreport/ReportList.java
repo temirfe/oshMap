@@ -71,6 +71,7 @@ public class ReportList {
         if (text.length() > 155) {
             text = text.substring(0, 155) + "...";
         }
+        text=text.trim();
 
         return text;
     }

@@ -64,7 +64,6 @@ public class ListReportsFragment extends Fragment {
     ProgressDialog progress;
     Button btn_reload;
     LinearLayout ll_reload;
-    public int ctg;
     public int user_id;
     public ListReportsFragment() {
         // Required empty public constructor
@@ -116,7 +115,7 @@ public class ListReportsFragment extends Fragment {
             Intent intent = new Intent(context, IncidentViewActivity.class);
             intent.putExtra("id",myid);
             intent.putExtra("from","list");
-            Log.i("ListRep","start for result");
+            //Log.i("ListRep","start for result");
             startActivityForResult(intent, 123);
         }
     };
@@ -148,7 +147,7 @@ public class ListReportsFragment extends Fragment {
 
             if(threshold<=2 && this.currentScrollState == SCROLL_STATE_IDLE){
                 if(current_page<total_pages){
-                    Log.i("Threshold reached", "loading next. current:"+current_page+" total:"+total_pages);
+                    //Log.i("Threshold reached", "loading next. current:"+current_page+" total:"+total_pages);
                     int next_page=current_page+1;
                     populateList(next_page, uriB, false);
                 }
@@ -156,12 +155,14 @@ public class ListReportsFragment extends Fragment {
 
             if (totalItem - currentFirstVisibleItem == currentVisibleItemCount
                     && this.currentScrollState == SCROLL_STATE_IDLE) {
-                Log.i("END of Current", "reached current:"+current_page+" total:"+total_pages);
-                progress = new ProgressDialog(getActivity());
-                progress.setProgressStyle(android.R.style.Widget_ProgressBar_Small);
-                progress.setMessage(getResources().getString(R.string.loading));
-                progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
-                progress.show();
+                //Log.i("END of Current", "reached current:"+current_page+" total:"+total_pages);
+                if(current_page<total_pages){
+                    progress = new ProgressDialog(getActivity());
+                    progress.setProgressStyle(android.R.style.Widget_ProgressBar_Small);
+                    progress.setMessage(getResources().getString(R.string.loading));
+                    progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+                    progress.show();
+                }
             }
         }
     };
@@ -180,11 +181,13 @@ public class ListReportsFragment extends Fragment {
 
         if(uriB==null){
             uriB = new Uri.Builder();
-            uriB.scheme("http").authority("api.temirbek.com").appendPath("incidents");
+            uriB.scheme("http").authority("map.oshcity.kg").appendPath("basic").appendPath("incidents");
         }
-        if(user_id!=0){
+        if(user_id!=0)//when MainActivity launched by AccountActivity bc of "show my incidents"
+        {
             uriB.appendQueryParameter("user_id", ""+user_id);
         }
+        //Log.i("USER ID", ""+user_id);
         Uri.Builder otherBuilder = Uri.parse(uriB.build().toString()).buildUpon();
 
         otherBuilder.appendQueryParameter("page", Integer.toString(page));
@@ -195,6 +198,7 @@ public class ListReportsFragment extends Fragment {
             @Override
             public void onResponse(JSONArray response) {
                 try{
+                    //Log.i("RESPONSE", "keldi");
                     if(progress!=null){progress.dismiss();}
                     if(applyNewFilter){mCommentList.clear();}
                     int leng=response.length();
@@ -267,20 +271,7 @@ public class ListReportsFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (data == null) {return;}
-        if(requestCode==123){
-
-            Uri.Builder builder = new Uri.Builder();
-            builder.scheme("http")
-                    .authority("api.temirbek.com")
-                    .appendPath("incidents");
-
-            ctg = data.getIntExtra("ctg",0);
-            if(ctg!=0){
-                builder.appendQueryParameter("category_id[]", Integer.toString(ctg));
-            }
-
-            populateList(1,builder,true);
-        }
+        getParentFragment().onActivityResult(requestCode,resultCode,data);
     }
 
 }

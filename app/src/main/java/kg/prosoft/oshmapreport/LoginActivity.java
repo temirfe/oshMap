@@ -261,12 +261,12 @@ public class LoginActivity extends Activity {
         Response.ErrorListener errorListener =new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("Response", error.toString());
+                //Log.e("Response", error.toString());
                 Toast.makeText(getApplicationContext(), "Произошла ошибка, перезагрузите приложение", Toast.LENGTH_LONG).show();
             }
         };
 
-        String url = "http://api.temirbek.com/omapusers/login";
+        String url = "http://map.oshcity.kg/basic/omapusers/login";
         StringRequest loginRequest = new StringRequest(Request.Method.POST, url,responseListener, errorListener){
             @Override
             protected Map<String,String> getParams(){

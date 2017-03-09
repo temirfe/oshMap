@@ -28,13 +28,13 @@ class CustomInfoWindowAdapter implements InfoWindowAdapter {
 
     @Override
     public View getInfoWindow(Marker marker) {
-        return(null);
+        render(marker, mContents);
+        return mContents;
     }
 
     @Override
     public View getInfoContents(Marker marker) {
-        render(marker, mContents);
-        return mContents;
+        return(null);
     }
 
     private void render(Marker marker, View view) {

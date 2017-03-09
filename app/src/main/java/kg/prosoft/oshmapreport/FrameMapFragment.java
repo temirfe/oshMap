@@ -38,10 +38,11 @@ public class FrameMapFragment extends Fragment implements
     MapView mMapView;
     private GoogleMap googleMap;
     private LatLngBounds OSH = new LatLngBounds(new LatLng(40.479966, 72.754476), new LatLng(40.565694, 72.852959));
-    //private LatLngBounds BISHKEK = new LatLngBounds(new LatLng(42.790932,74.5002453), new LatLng(42.92415,74.6766403));
+    //private LatLngBounds OSH = new LatLngBounds(new LatLng(42.790932,74.5002453), new LatLng(42.92415,74.6766403)); //actually it's bishkek
 
     protected static final String TAG = "FrameMapFragment";
     public Marker myMarker;
+    ParentFrag mParentFrag;
 
     /**
      * Provides the entry point to Google Play services.
@@ -55,6 +56,8 @@ public class FrameMapFragment extends Fragment implements
 
     public double lat;
     public double lng;
+    public double mylat;
+    public double mylng;
     public boolean marker_already=false;
 
     public FrameMapFragment() {
@@ -86,8 +89,8 @@ public class FrameMapFragment extends Fragment implements
             public void onMapReady(GoogleMap mMap) {
                 googleMap = mMap;
                 LatLng myLocation = new LatLng(40.51719,72.8037146); //oshCityHall
-                //LatLng bishkek = new LatLng(42.8742589,74.6131682);
-                if(lat!=0 && lng!=0){
+                //LatLng myLocation = new LatLng(42.8742589,74.6131682); //bishkek
+                if(lat!=0.0 && lng!=0.0){
                     myLocation=new LatLng(lat, lng);
                     marker_already=true;
                     myMarker=googleMap.addMarker(new MarkerOptions().position(myLocation).draggable(true));
@@ -110,6 +113,7 @@ public class FrameMapFragment extends Fragment implements
                     .build();
         }
 
+        onAttachToParentFragment(getParentFragment());
         return rootView;
     }
 
@@ -153,9 +157,14 @@ public class FrameMapFragment extends Fragment implements
                     == PackageManager.PERMISSION_GRANTED) {
                 //mMap.setMyLocationEnabled(true);
                 if (mLastLocation != null) {
-                    double mylat=mLastLocation.getLatitude();
-                    double mylng=mLastLocation.getLongitude();
-                    Log.i("My location", "My current loc:"+mylat+","+mylng);
+                    mylat=mLastLocation.getLatitude();
+                    mylng=mLastLocation.getLongitude();
+                    if (mParentFrag != null)
+                    {
+                        mParentFrag.setParent();
+                    }
+
+                    Log.i("Temir My location", "My current loc:"+mylat+","+mylng);
 
                     LatLng myLocation=new LatLng(mylat, mylng);
                     if(OSH.contains(myLocation)){
@@ -186,5 +195,22 @@ public class FrameMapFragment extends Fragment implements
         // Refer to the javadoc for ConnectionResult to see what error codes might be returned in
         // onConnectionFailed.
         Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
+    }
+
+    public interface ParentFrag
+    {
+        public void setParent();
+    }
+    public void onAttachToParentFragment(Fragment fragment)
+    {
+        try
+        {
+            mParentFrag = (ParentFrag)fragment;
+        }
+        catch (ClassCastException e)
+        {
+            throw new ClassCastException(
+                    fragment.toString() + " must implement ParentFrag");
+        }
     }
 }
