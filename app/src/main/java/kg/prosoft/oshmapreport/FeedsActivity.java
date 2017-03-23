@@ -90,11 +90,13 @@ public class FeedsActivity extends Activity {
             String title=item.getTitle();
             String text=item.getText();
             String date=item.getDate();
+            String link=item.getLink();
             Intent intent = new Intent(context, FeedViewActivity.class);
             intent.putExtra("id",myid);
             intent.putExtra("title",title);
             intent.putExtra("text",text);
             intent.putExtra("date",date);
+            intent.putExtra("link",link);
             startActivity(intent);
         }
     };
@@ -148,8 +150,9 @@ public class FeedsActivity extends Activity {
                         String title=jsonObject.getString("item_title");
                         String text=jsonObject.getString("item_description");
                         String date=jsonObject.getString("item_date");
+                        String link=jsonObject.getString("item_link");
 
-                        Feed feed = new Feed(id, title,text,date);
+                        Feed feed = new Feed(id, title,text,date,link);
                         feedList.add(feed);
                     }
 

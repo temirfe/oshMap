@@ -9,12 +9,14 @@ import java.io.Serializable;
 public class Categories implements Serializable {
     private int id;
     private String title;
+    private String title_ky;
     private String image;
 
-    public Categories(int id, String title, String image) {
+    public Categories(int id, String title, String image, String title_ky) {
         this.id = id;
         this.image = image;
         this.title = title;
+        this.title_ky = title_ky;
     }
 
     public int getId() {
@@ -22,6 +24,9 @@ public class Categories implements Serializable {
     }
     public String getTitle() {
         return title;
+    }
+    public String getTitleKy() {
+        return title_ky;
     }
 
     public String getImage() {

@@ -4,6 +4,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".MapsActivity">
     <item android:id="@+id/action_back"
-        android:title="Готово"
+        android:title="@string/done"
         app:showAsAction="always" />
 </menu>

@@ -13,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -33,7 +34,8 @@ import kg.prosoft.oshmapreport.utils.NotificationUtils;
 
 public class MainActivity extends Activity {
 
-    ReportsFragment homefrag;
+    HomeFragment homefrag;
+    ReportsFragment reportfrag;
     AddReportFragment secfrag;
     MenuFragment menuFrag;
     ArrayList<Categories> mCategoriesList;
@@ -41,6 +43,7 @@ public class MainActivity extends Activity {
     RichBottomNavigationView botNav;
     String from;
     Bundle fromBundle;
+    int tabIndex;
     private BroadcastReceiver mRegistrationBroadcastReceiver;
 
     @Override
@@ -48,7 +51,8 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState == null) {
-            homefrag = new ReportsFragment();
+            homefrag = new HomeFragment();
+            reportfrag = new ReportsFragment();
             secfrag = new AddReportFragment();
             menuFrag = new MenuFragment();
             setContentView(R.layout.activity_main);
@@ -70,6 +74,7 @@ public class MainActivity extends Activity {
         }
 
         context=this;
+        //Log.i("LANGUAGE",LocaleHelper.getLanguage(context));
         getCategorized();
 
         //hide icon
@@ -89,7 +94,12 @@ public class MainActivity extends Activity {
                                 putFragment(homefrag);
                                 setTitle(R.string.app_name_short);
                                 break;
-                            case R.id.second_item:
+                            case R.id.reports_item:
+                                //getActionBar().setDisplayShowHomeEnabled(true);
+                                putFragment(reportfrag);
+                                setTitle(R.string.app_name_short);
+                                break;
+                            case R.id.add_item:
                                 //getActionBar().setDisplayShowHomeEnabled(false);
                                 putFragment(secfrag);
                                 setTitle(R.string.send_incident);
@@ -149,11 +159,17 @@ public class MainActivity extends Activity {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 
+        fromBundle = new Bundle();
         //if user clicked "My incidents" from menu, then "from" will come with "myIncidnets"
-        if(fromBundle==null){
-            fromBundle = new Bundle();
-            fromBundle.putString("from", from);
+        fromBundle.putString("from", from);
+        //tab index (listFrag should be opened if it was clicked from home page)
+        fromBundle.putInt("tabIndex", tabIndex);
+        if(frag.getArguments() == null){
             frag.setArguments(fromBundle);
+        }
+        else {
+            frag.getArguments().putAll(fromBundle);
+            Log.i("ARGUMENTS","notNull");
         }
 
         if(frag.isVisible()){
@@ -162,6 +178,7 @@ public class MainActivity extends Activity {
 
         //hide all first
         if (homefrag.isAdded()) { ft.hide(homefrag); }
+        if (reportfrag.isAdded()) { ft.hide(reportfrag); }
         if (secfrag.isAdded()) { ft.hide(secfrag); }
         if (menuFrag.isAdded()) { ft.hide(menuFrag); }
 
@@ -173,6 +190,7 @@ public class MainActivity extends Activity {
         }
         ft.commit();
     }
+
 
     /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -208,9 +226,10 @@ public class MainActivity extends Activity {
                             JSONObject jsonObject = response.getJSONObject(i);
                             int id = jsonObject.getInt("id");
                             String title=jsonObject.getString("category_title");
+                            String title_ky=jsonObject.getString("title_ky");
                             String image=jsonObject.getString("category_image");
 
-                            mCategoriesList.add(new Categories(id, title,image));
+                            mCategoriesList.add(new Categories(id, title,image, title_ky));
                         }
                         CategoriesCache cc = new CategoriesCache(mCategoriesList);
                         cc.saveObject(cc, context);
@@ -280,4 +299,19 @@ public class MainActivity extends Activity {
         }
 
     }*/
+
+    //change language
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleHelper.onAttach(base));
+    }
+
+    public void updateViews(String languageCode) {
+        LocaleHelper.setLocale(this, languageCode);
+        //this.recreate();
+        Intent myIntent = getIntent();
+        myIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finish();
+        startActivity(myIntent);
+    }
 }

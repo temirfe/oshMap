@@ -34,7 +34,8 @@ public class CategoriesAdapter extends BaseAdapter {
     public CategoriesAdapter(Context mContext, List<Categories> mCategoriesList,ArrayList<Integer> alreadyList) {
         this.mContext = mContext;
         this.mCategoriesList = mCategoriesList;
-        selectedCtgs=alreadyList;
+        if(alreadyList!=null){selectedCtgs=alreadyList;}
+        else selectedCtgs=new ArrayList<>();
     }
 
     @Override
@@ -62,8 +63,14 @@ public class CategoriesAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.category_item,null);
 
         Categories Categories = mCategoriesList.get(position);
-        String title=Categories.getTitle();
-        String image=Categories.getImage();
+        String title;
+        if(LocaleHelper.getLanguage(mContext).equals("ky")){
+            title=Categories.getTitleKy();
+        }
+        else{
+            title=Categories.getTitle();
+        }
+        //String image=Categories.getImage();
         //String image_name=image.split("\\.")[0];
         int category_id=Categories.getId();
 
@@ -82,7 +89,7 @@ public class CategoriesAdapter extends BaseAdapter {
         }*/
         CheckBox checkBox = (CheckBox)convertView.findViewById(R.id.id_chb_select_ctg);
         checkBox.setOnCheckedChangeListener(null); //otherwise setChecked method fires it
-        if(!selectedCtgs.isEmpty() && selectedCtgs.contains(category_id)){
+        if(selectedCtgs!=null && !selectedCtgs.isEmpty() && selectedCtgs.contains(category_id)){
             checkBox.setChecked(true);
         }
         else{
@@ -122,6 +129,7 @@ public class CategoriesAdapter extends BaseAdapter {
             int ctg=Integer.parseInt(buttonView.getTag().toString());
             if (isChecked) {
                 selectedCtgs.add(ctg);
+                //Log.i("CategoriesAdapter 125","ctg:"+ctg);
             }else{
                 selectedCtgs.remove(Integer.valueOf(ctg));
             }

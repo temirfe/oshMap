@@ -73,6 +73,7 @@ public class ReportsFragment extends Fragment {
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
+
         if(from.equals("myIncidents") && user_id!=0){
             show_from="me";
             mapFrag.user_id=user_id;
@@ -90,7 +91,7 @@ public class ReportsFragment extends Fragment {
         tabLayout = (TabLayout) layout.findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
-
+        showTab();
 
         return layout;
     }
@@ -98,8 +99,28 @@ public class ReportsFragment extends Fragment {
         ReportsTabAdapter adapter = new ReportsTabAdapter(getChildFragmentManager());
 
         adapter.addFragment(mapFrag, "Карта");
-        adapter.addFragment(listFrag, "Список");
+        adapter.addFragment(listFrag, getResources().getString(R.string.list));
         viewPager.setAdapter(adapter);
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            showTab();
+        }
+    }
+
+    public void showTab(){
+        int tabIndx=0;
+        try {
+            tabIndx = getArguments().getInt("tabIndex");
+            tabLayout.setScrollPosition(tabIndx,0f,true);
+            viewPager.setCurrentItem(tabIndx);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+        Log.i("REP TABINDX SHOW",tabIndx+"");
     }
 
     /*@Override
@@ -179,12 +200,15 @@ public class ReportsFragment extends Fragment {
                 int selectedCount = selectedCtgs.size();
                 if (selectedCount != 0) {
                     for (int ctg : selectedCtgs) {
+                        Log.i("ReportsFragment(182)", "ctg is "+ctg);
                         builder.appendQueryParameter("category_id[]", Integer.toString(ctg));
                         map_builder.appendQueryParameter("category_id[]", Integer.toString(ctg));
                     }
                 } else {
-                    //Log.i("ActRes", "ctg is null");
+                    Log.i("ReportsFragment(187)", "ctg is null");
                 }
+            } else {
+                Log.i("ReportsFragment(190)", "selectedCtgs is null");
             }
 
             int ctgry = data.getIntExtra("ctg",0);

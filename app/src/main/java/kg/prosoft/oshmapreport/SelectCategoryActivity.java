@@ -43,7 +43,7 @@ public class SelectCategoryActivity extends Activity {
         for(Map.Entry<Integer, Categories> entry : allCtgs.entrySet()) {
             int key = entry.getKey();
             Categories value = entry.getValue();
-            mCategoriesList.add(new Categories(key,value.getTitle(),value.getImage()));
+            mCategoriesList.add(new Categories(key,value.getTitle(),value.getImage(), value.getTitleKy()));
         }
         adapter = new CategoriesAdapter(this,mCategoriesList,selectedCtgs);
         lv_categories.setAdapter(adapter);

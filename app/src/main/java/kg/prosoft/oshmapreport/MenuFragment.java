@@ -1,6 +1,7 @@
 package kg.prosoft.oshmapreport;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 
@@ -30,6 +32,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener{
     Context context;
     SessionManager session;
     TextView tv_name;
+    RadioGroup radio_group_lang;
 
     public MenuFragment() {
         // Required empty public constructor
@@ -42,6 +45,8 @@ public class MenuFragment extends Fragment implements View.OnClickListener{
         // Inflate the layout for this fragment
         //setHasOptionsMenu(true);
         View layout= inflater.inflate(R.layout.fragment_menu, container, false);
+
+        context = getActivity();
         ll_login = (LinearLayout) layout.findViewById(R.id.id_ll_login);
         ll_login.setOnClickListener(this);
         ll_about = (LinearLayout) layout.findViewById(R.id.id_ll_about);
@@ -53,10 +58,13 @@ public class MenuFragment extends Fragment implements View.OnClickListener{
         ll_goToAccount = (LinearLayout) layout.findViewById(R.id.id_ll_goToAccount);
         ll_goToAccount.setOnClickListener(this);
 
+        radio_group_lang=(RadioGroup) layout.findViewById(R.id.id_rgroup_lng);
+        if(LocaleHelper.getLanguage(context).equals("ky")){
+            radio_group_lang.check(R.id.id_radio_ky);
+        }
+        radio_group_lang.setOnCheckedChangeListener(changeLangListener);
 
         tv_name = (TextView) layout.findViewById(R.id.id_tv_name);
-
-        context = getActivity();
         session = new SessionManager(context.getApplicationContext());
         if(session.isLoggedIn()){
             String name=session.getName();
@@ -69,6 +77,24 @@ public class MenuFragment extends Fragment implements View.OnClickListener{
         }
         return layout;
     }
+
+    RadioGroup.OnCheckedChangeListener changeLangListener = new RadioGroup.OnCheckedChangeListener()
+    {
+        @Override
+        public void onCheckedChanged(RadioGroup group, int checkedId)
+        {
+            MainActivity mainAct=(MainActivity)context;
+            switch(checkedId)
+            {
+                case R.id.id_radio_ru:
+                    mainAct.updateViews("ru");
+                    break;
+                case R.id.id_radio_ky:
+                    mainAct.updateViews("ky");
+                    break;
+            }
+        }
+    };
 
     @Override
     public void onClick(View v) {

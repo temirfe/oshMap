@@ -49,7 +49,6 @@ public class RichBottomNavigationView extends BottomNavigationView {
     public RichBottomNavigationView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
-        ;
     }
 
 

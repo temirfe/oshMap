@@ -168,9 +168,10 @@ public class FilterActivity extends Activity {
                             JSONObject jsonObject = response.getJSONObject(i);
                             int id = jsonObject.getInt("id");
                             String title=jsonObject.getString("category_title");
+                            String title_ky=jsonObject.getString("title_ky");
                             String image=jsonObject.getString("category_image");
 
-                            Categories categories = new Categories(id, title,image);
+                            Categories categories = new Categories(id, title,image, title_ky);
                             ctgMap.put(id,categories);
                         }
 
@@ -189,7 +190,8 @@ public class FilterActivity extends Activity {
         if (data == null) {return;}
         if(requestCode==1 && resultCode==RESULT_OK){ //selected categories
             selectedCtgs = data.getIntegerArrayListExtra("ctg1");
-            int selectedCount=selectedCtgs.size();
+            int selectedCount=0;
+            if(selectedCtgs!=null){selectedCount=selectedCtgs.size();}
             if(selectedCount!=0){
                 List<String> strings = new LinkedList<>();
                 for (int ctg : selectedCtgs)

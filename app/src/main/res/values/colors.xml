@@ -15,4 +15,9 @@
     <color name="lightBlue">#99d4ff</color>
     <color name="lightBlue2">#66bfff</color>
     <color name="sky">#ddeee4</color>
+
+    <color name="lightRed">#e08f85</color>
+    <color name="lightGreen">#9ad4ad</color>
+    <color name="lightOrange">#fcd369</color>
+    <color name="orange">#fbba16</color>
 </resources>

@@ -136,7 +136,7 @@ public class MapReportsFragment extends Fragment implements
                             JSONObject jsonObject = response.getJSONObject(i);
                             int id = jsonObject.getInt("id");
                             int incident_id = jsonObject.getInt("incident_id");
-                            int incident_verified = jsonObject.getInt("incident_verified");
+                            int incident_verified = jsonObject.optInt("incident_verified");
                             double lat = jsonObject.getDouble("latitude");
                             double lng = jsonObject.getDouble("longitude");
                             String location_name=jsonObject.getString("location_name");

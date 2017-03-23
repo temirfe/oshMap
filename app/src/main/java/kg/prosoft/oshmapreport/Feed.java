@@ -17,11 +17,12 @@ public class Feed {
     private String date;
     private String link;
 
-    public Feed(int id, String title, String text, String date) {
+    public Feed(int id, String title, String text, String date, String link) {
         this.id = id;
         this.title = title;
         this.text = text;
         this.date=date;
+        this.link=link;
     }
 
     public int getId() {
@@ -34,6 +35,9 @@ public class Feed {
 
     public String getText() {
         return text;
+    }
+    public String getLink() {
+        return link;
     }
 
     public String getDate() {

@@ -444,7 +444,12 @@ public class AddReportFragment extends Fragment implements View.OnClickListener,
                 for (int ctg : selectedCtgs)
                 {
                     Categories ctgO= ctgMap.get(ctg);
-                    strings.add(ctgO.getTitle());
+                    if(LocaleHelper.getLanguage(context).equals("ky")){
+                        strings.add(ctgO.getTitleKy());
+                    }
+                    else{
+                        strings.add(ctgO.getTitle());
+                    }
                 }
                 tv_addcategory.setText(TextUtils.join("\n", strings));
             }
@@ -516,9 +521,10 @@ public class AddReportFragment extends Fragment implements View.OnClickListener,
                             JSONObject jsonObject = response.getJSONObject(i);
                             int id = jsonObject.getInt("id");
                             String title=jsonObject.getString("category_title");
+                            String title_ky=jsonObject.getString("title_ky");
                             String image=jsonObject.getString("category_image");
 
-                            Categories categories = new Categories(id, title,image);
+                            Categories categories = new Categories(id, title,image, title_ky);
                             ctgMap.put(id,categories);
                         }
 
@@ -661,7 +667,7 @@ public class AddReportFragment extends Fragment implements View.OnClickListener,
         Bundle bundle = new Bundle();
         bundle.putDouble("lat", lat);
         bundle.putDouble("lng", lng);
-        Log.i("Temir LATLNG", "lat"+lat+" lng"+lng);
+        //Log.i("Temir LATLNG", "lat"+lat+" lng"+lng);
         fmfragment.setArguments(bundle);
         putFragment(fmfragment);
 
@@ -706,12 +712,13 @@ public class AddReportFragment extends Fragment implements View.OnClickListener,
             lat = nestFrag.mylat;
             lng = nestFrag.mylng;
             if(lat!=0.0){
-                Log.i("mylat good",""+lat);
+                //Log.i("mylat good",""+lat);
                 tv_lat.setText(Double.toString(lat));
                 tv_lng.setText(Double.toString(lng));
             }
             else{
-                Log.i("mylat bad",""+lat);}
+                Log.i("mylat bad",""+lat);
+            }
             // it can be a string, or int, or some custom java object.
         }
     }

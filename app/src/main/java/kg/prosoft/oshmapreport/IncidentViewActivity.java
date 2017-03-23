@@ -260,7 +260,7 @@ public class IncidentViewActivity extends Activity {
 
                     if(jsonObject.has("media")){
                         JSONArray media = jsonObject.getJSONArray("media");
-                        String imgUrl="http://map.oshcity.kg/basic/uploads";
+                        String imgUrl="http://map.oshcity.kg/media/uploads";
                         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(100, 100);
                         lp.setMargins(0, 0, 10, 10);
                         for(int i=0; i < media.length(); i++){

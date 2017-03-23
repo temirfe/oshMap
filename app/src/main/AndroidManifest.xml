@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="kg.prosoft.oshmapreport">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-    <uses-feature android:name="android.hardware.camera2"  android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera2"
+        android:required="false" />
 
-    <!-- To auto-complete the email text field in the login form with the user's emails -->
-    <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission
+        android:name="android.permission.READ_PHONE_STATE"
+        tools:node="remove" />
+    <!-- <uses-permission android:name="android.permission.REAL_GET_TASKS" /> i don't know why I added this -->
+
+    <supports-screens android:largeScreens="true" />
+    <supports-screens android:xlargeScreens="true" />
 
     <application
         android:name="android.support.multidex.MultiDexApplication"
@@ -27,7 +34,12 @@
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|screenSize"
-            android:windowSoftInputMode="adjustPan"></activity>
+            android:windowSoftInputMode="adjustPan">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".TestActivity" />
         <activity android:name=".IncidentViewActivity" />
         <activity android:name=".SelectCategoryActivity" />
@@ -91,11 +103,6 @@
         <activity
             android:name=".SplashScreenActivity"
             android:theme="@style/SplashTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 
