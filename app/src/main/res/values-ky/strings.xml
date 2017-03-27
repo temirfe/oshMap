@@ -48,7 +48,7 @@
     <string name="short_title">Кыскача аталышы</string>
     <string name="full_description">Кенен баяндоо</string>
     <string name="date_time">Дата жана убакыт:</string>
-    <string name="your_location">Жайгашкан ордун тактаңыз</string>
+    <string name="your_location">Жайгашкан ордун тактаңыз (адрес)</string>
     <string name="news_link">Жаңылыка шилтеме (милдеттүү эмес)</string>
     <string name="video_link">Видеого шилтеме (милдеттүү эмес)</string>
     <string name="add_image">Сүрөт кошуу</string>
@@ -90,6 +90,7 @@
     <string name="add_incident">Билдирүү жөнөтүү</string>
     <string name="incident_list">Билдирүүлөр тизмеси</string>
     <string name="map">Карта</string>
+    <string name="back">Артка</string>
 
 
     <!-- ADDED BY GOOGLE MAPS -->

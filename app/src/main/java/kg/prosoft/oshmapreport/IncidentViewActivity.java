@@ -93,6 +93,7 @@ public class IncidentViewActivity extends Activity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayShowHomeEnabled(false);
+            actionBar.setTitle(getResources().getString(R.string.back));
         }
         activity=this;
         session = new SessionManager(activity);

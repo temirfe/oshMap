@@ -56,6 +56,7 @@ public class GalleryActivity extends Activity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayShowHomeEnabled(false);
+            actionBar.setTitle(getResources().getString(R.string.close));
         }
 
         Intent intent=getIntent();

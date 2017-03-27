@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="kg.prosoft.oshmapreport.AddReportFragment">
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,7 +17,7 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:background="@color/gray"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
             <!--title-->
             <EditText
                 android:imeOptions="flagNoExtractUi"
@@ -24,8 +25,8 @@
                 android:layout_height="wrap_content"
                 android:inputType="text"
                 android:id="@+id/id_et_title"
-                android:padding="5dp"
-                android:textAppearance="@android:style/TextAppearance.Small"
+                android:textSize="15sp"
+                android:padding="10dp"
                 android:background="@color/white"
                 android:hint="@string/short_title" />
             <!--description-->
@@ -33,13 +34,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="flagNoExtractUi"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="10dp"
                 android:inputType="textMultiLine"
-                android:textAppearance="@android:style/TextAppearance.Small"
+                android:textSize="15sp"
                 android:id="@+id/id_et_description"
                 android:hint="@string/full_description"
                 android:background="@color/white"
-                android:padding="5dp"
+                android:padding="10dp"
                 />
 
             <!--date-->
@@ -47,7 +48,7 @@
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="7dp">
+                android:layout_marginTop="20dp">
                 <TextView
                     android:layout_width="wrap_content"
                     android:text="@string/date_time"
@@ -69,23 +70,24 @@
             <!--categories-->
             <LinearLayout
                 android:orientation="horizontal"
-                android:layout_marginTop="7dp"
-                android:layout_marginBottom="4dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-            <TextView
-                android:text="@string/text_categories"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="15dp"
-                android:id="@+id/id_tv_categories" />
+                <TextView
+                    android:text="@string/text_categories"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="15dp"
+                    android:id="@+id/id_tv_categories" />
 
-            <TextView
-                android:text="@string/select"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@drawable/link"
-                android:id="@+id/id_btn_addcategory" />
+                <TextView
+                    android:text="@string/select"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:textColor="@drawable/link"
+                    android:id="@+id/id_btn_addcategory" />
             </LinearLayout>
 
             <TextView
@@ -101,7 +103,7 @@
                 android:text="@string/set_location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"/>
+                android:layout_marginTop="20dp"/>
             <!--map frame-->
             <RelativeLayout
                 android:layout_width="300dp"
@@ -116,7 +118,7 @@
                     >
                 </FrameLayout>
             </RelativeLayout>
-           <TextView
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
@@ -132,21 +134,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPostalAddress"
-                android:layout_marginTop="7dp"
-                android:textAppearance="@android:style/TextAppearance.Small"
+                android:layout_marginTop="10dp"
                 android:id="@+id/id_et_address"
                 android:hint="@string/your_location"
+                android:textSize="15sp"
                 android:background="@color/white"
                 android:padding="5dp" />
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/id_ll_images"
-            >
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/id_ll_images"
+                >
 
-        </LinearLayout>
+            </LinearLayout>
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -158,7 +160,7 @@
                 android:paddingRight="10dp"
                 android:paddingTop="3dp"
                 android:paddingBottom="3dp"
-                android:layout_marginTop="7dp"
+                android:layout_marginTop="12dp"
                 android:layout_marginBottom="7dp"
                 >
 
@@ -170,7 +172,9 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:paddingLeft="10dp"
+                    android:textSize="18sp"
                     android:text="@string/add_image"
+                    android:textColor="@drawable/link"
                     android:paddingTop="3dp"
                     android:id="@+id/id_tv_add_photo"
                     android:layout_height="wrap_content" />
@@ -180,9 +184,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textUri"
-                android:layout_marginTop="6dp"
-                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_marginTop="10dp"
                 android:id="@+id/id_et_news_link"
+                android:textSize="15sp"
                 android:hint="@string/news_link"
                 android:background="@color/white"
                 android:padding="5dp"/>
@@ -191,19 +195,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textUri"
-                android:layout_marginTop="6dp"
-                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_marginTop="10dp"
                 android:id="@+id/id_et_video_link"
+                android:textSize="15sp"
                 android:hint="@string/video_link"
                 android:background="@color/white"
                 android:padding="5dp"/>
 
             <TextView
-            android:text="@string/sender"
-            android:paddingTop="15dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/id_tv_sender" />
+                android:text="@string/sender"
+                android:paddingTop="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/id_tv_sender" />
 
             <EditText
                 android:layout_width="match_parent"

@@ -47,7 +47,11 @@ public class AboutActivity extends Activity {
     }
 
     public void getText(){
-        String uri="http://map.oshcity.kg/basic/site/about";
+        String lang="ru";
+        if(LocaleHelper.getLanguage(this).equals("ky")){
+            lang="ky";
+        }
+        String uri="http://map.oshcity.kg/basic/site/about?lang="+lang;
         StringRequest volReq = new StringRequest(Request.Method.GET, uri,
                 new Response.Listener<String>() {
                     @Override

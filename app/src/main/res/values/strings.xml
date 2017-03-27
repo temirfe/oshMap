@@ -48,7 +48,7 @@
     <string name="short_title">Краткое название</string>
     <string name="full_description">Подробное описание</string>
     <string name="date_time">Дата и время:</string>
-    <string name="your_location">Уточните местоположение</string>
+    <string name="your_location">Уточните местоположение (адрес)</string>
     <string name="news_link">Ссылка на новость (необязательно)</string>
     <string name="video_link">Ссылка на видео (необязательно)</string>
     <string name="add_image">Добавить фото</string>
@@ -90,6 +90,7 @@
     <string name="add_incident">Отправить обращение</string>
     <string name="incident_list">Список обращений</string>
     <string name="map">Карта</string>
+    <string name="back">Назад</string>
 
     <!-- ADDED BY GOOGLE MAPS -->
     <!--    Permissions    -->

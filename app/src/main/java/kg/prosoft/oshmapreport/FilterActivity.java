@@ -133,7 +133,12 @@ public class FilterActivity extends Activity {
                 for (int ctg : selectedCtgs)
                 {
                     Categories ctgO= ctgMap.get(ctg);
-                    strings.add(ctgO.getTitle());
+                    if(LocaleHelper.getLanguage(this).equals("ky")){
+                        strings.add(ctgO.getTitleKy());
+                    }
+                    else{
+                        strings.add(ctgO.getTitle());
+                    }
                 }
 
                 String selected=TextUtils.join("\n", strings);
@@ -197,7 +202,13 @@ public class FilterActivity extends Activity {
                 for (int ctg : selectedCtgs)
                 {
                     Categories ctgO= ctgMap.get(ctg);
-                    strings.add(ctgO.getTitle());
+
+                    if(LocaleHelper.getLanguage(this).equals("ky")){
+                        strings.add(ctgO.getTitleKy());
+                    }
+                    else{
+                        strings.add(ctgO.getTitle());
+                    }
                 }
                 String selected=TextUtils.join("\n", strings);
                 selected=getResources().getString(R.string.selected)+"\n"+selected;
