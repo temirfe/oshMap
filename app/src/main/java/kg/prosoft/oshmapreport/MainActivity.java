@@ -90,7 +90,6 @@ public class MainActivity extends Activity {
                         //.getMenu().findItem(R.id.recent_item).setChecked(false);
                         switch (item.getItemId()) {
                             case R.id.home_item:
-                                //getActionBar().setDisplayShowHomeEnabled(true);
                                 putFragment(homefrag);
                                 setTitle(R.string.app_name_short);
                                 break;
@@ -169,7 +168,6 @@ public class MainActivity extends Activity {
         }
         else {
             frag.getArguments().putAll(fromBundle);
-            Log.i("ARGUMENTS","notNull");
         }
 
         if(frag.isVisible()){

@@ -231,6 +231,29 @@ public class IncidentViewActivity extends Activity {
         MyVolley.getInstance(this).addToRequestQueue(volReq);
     }
 
+    public String getCatTitle(JSONObject ctgObj, int ctg_id){
+        String title="";
+        if(LocaleHelper.getLanguage(activity).equals("ky")){
+            CategoriesCache cachedCtgs = new CategoriesCache().getObject(activity.getApplicationContext());
+            if(cachedCtgs!= null)
+            {
+                for(Categories ctg : cachedCtgs.getCategories()){
+                    if(ctg.getId()==ctg_id){
+                        title=ctg.getTitleKy();
+                    }
+                }
+            }
+            else{
+                Log.i("GETCATTITLEEEEE","cached is nullllllllll");}
+        }
+        else{
+            try {
+                title = ctgObj.getString("category_title");
+            }catch(JSONException e){e.printStackTrace();}
+        }
+        return title;
+    }
+
     public void getIncident(final int id){
         String uri = String.format("http://map.oshcity.kg/basic/incidents/%1$s",id);
 
@@ -242,9 +265,10 @@ public class IncidentViewActivity extends Activity {
                         JSONArray categories = jsonObject.getJSONArray("categories");
                         for(int i=0; i < categories.length(); i++){
                             JSONObject ctgObj = categories.getJSONObject(i);
-                            String ctg_title=ctgObj.getString("category_title");
+                            //String ctg_title=ctgObj.getString("category_title");
                             //String ctg_image=ctgObj.getString("category_image");
                             int ctg_id=ctgObj.getInt("id");
+                            String ctg_title=getCatTitle(ctgObj, ctg_id);
                             TextView tv = new TextView(activity);
                             tv.setBackgroundResource(R.drawable.blue_view_click);
                             tv.setPadding(10, 1, 10, 2);
