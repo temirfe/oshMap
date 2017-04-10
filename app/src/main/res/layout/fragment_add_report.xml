@@ -74,15 +74,15 @@
                 android:layout_marginBottom="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <TextView
+                <!--<TextView
                     android:text="@string/text_categories"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="15dp"
-                    android:id="@+id/id_tv_categories" />
+                    android:id="@+id/id_tv_categories" />-->
 
                 <TextView
-                    android:text="@string/select"
+                    android:text="@string/select_service"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="15sp"

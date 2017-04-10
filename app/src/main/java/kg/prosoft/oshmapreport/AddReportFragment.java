@@ -1,6 +1,7 @@
 package kg.prosoft.oshmapreport;
 
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.FragmentManager;
@@ -11,18 +12,21 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,13 +45,11 @@ import android.widget.Toast;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.ServerError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONArray;
@@ -122,7 +124,7 @@ public class AddReportFragment extends Fragment implements View.OnClickListener,
     SessionManager session;
 
     Context context;
-    Context activity;
+    Activity activity;
     private Bitmap bitmap;
     private int user_id;
     public RelativeLayout rl_map;
@@ -433,6 +435,7 @@ public class AddReportFragment extends Fragment implements View.OnClickListener,
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CAMERA_CAPTURE_IMAGE_REQUEST_CODE && resultCode == RESULT_OK) {
             String path=fileUri.getPath();
+            Log.i("PATH OF FILE",path);
             previewImage(path);
         }
         if (data == null) {return;}
@@ -629,9 +632,14 @@ public class AddReportFragment extends Fragment implements View.OnClickListener,
     }
 
     public Uri getOutputMediaFileUri(int type) {
+        isStoragePermissionGranted();
         return Uri.fromFile(getOutputMediaFile(type));
     }
     private static File getOutputMediaFile(int type) {
+
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss",
+                Locale.getDefault()).format(new Date());
+        File mediaFile;
 
         // External sdcard location
         File mediaStorageDir = new File(
@@ -644,14 +652,19 @@ public class AddReportFragment extends Fragment implements View.OnClickListener,
             if (!mediaStorageDir.mkdirs()) {
                 Log.d(IMAGE_DIRECTORY_NAME, "Oops! Failed create "
                         + IMAGE_DIRECTORY_NAME + " directory");
+                //------------ for internal storage, not done yet
+                    //http://stackoverflow.com/questions/31678146/saving-image-taken-from-camera-into-internal-storage
+                    /*mediaFile = new File(
+                            Environment
+                                    .getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
+                            "IMG_" + timeStamp + ".jpg");
+                    return mediaFile;*/
+                //------------
                 return null;
             }
         }
 
         // Create a media file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss",
-                Locale.getDefault()).format(new Date());
-        File mediaFile;
         if (type == MEDIA_TYPE_IMAGE) {
             mediaFile = new File(mediaStorageDir.getPath() + File.separator
                     + "IMG_" + timeStamp + ".jpg");
@@ -660,6 +673,17 @@ public class AddReportFragment extends Fragment implements View.OnClickListener,
         }
 
         return mediaFile;
+    }
+
+    public void isStoragePermissionGranted() {
+        //http://stackoverflow.com/questions/3853472/creating-a-directory-in-sdcard-fails/38694026
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (ContextCompat.checkSelfPermission(context,android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(activity,
+                        new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+            }
+        }
     }
 
     public void showMapFrame(){

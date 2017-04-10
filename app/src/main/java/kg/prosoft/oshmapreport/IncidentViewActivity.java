@@ -244,7 +244,8 @@ public class IncidentViewActivity extends Activity {
                 }
             }
             else{
-                Log.i("GETCATTITLEEEEE","cached is nullllllllll");}
+                //Log.i("GETCATTITLEEEEE","cached is nullllllllll");
+                }
         }
         else{
             try {

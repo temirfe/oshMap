@@ -2,25 +2,19 @@ package kg.prosoft.oshmapreport;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,12 +23,10 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.ArrayList;
 
-import kg.prosoft.oshmapreport.utils.FirebaseConfig;
-import kg.prosoft.oshmapreport.utils.NotificationUtils;
 
 public class MainActivity extends Activity {
 
-    HomeFragment homefrag;
+    //HomeFragment homefrag;
     ReportsFragment reportfrag;
     AddReportFragment secfrag;
     MenuFragment menuFrag;
@@ -42,16 +34,16 @@ public class MainActivity extends Activity {
     Context context;
     RichBottomNavigationView botNav;
     String from;
+    String open;
     Bundle fromBundle;
     int tabIndex;
-    private BroadcastReceiver mRegistrationBroadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState == null) {
-            homefrag = new HomeFragment();
+            //homefrag = new HomeFragment();
             reportfrag = new ReportsFragment();
             secfrag = new AddReportFragment();
             menuFrag = new MenuFragment();
@@ -63,14 +55,29 @@ public class MainActivity extends Activity {
 
         Intent intent=getIntent();
         from =intent.getStringExtra("from");
+        open =intent.getStringExtra("open");
         if(from==null){from="";}
+        if(open==null){open="";}
         if(from.equals("login")){
             putFragment(menuFrag);
-            botNav.getMenu().findItem(R.id.likes_item).setChecked(false);
-            botNav.getMenu().findItem(R.id.likes_item).setChecked(true);
+            botNav.findViewById(R.id.likes_item).performClick();
         }
-        else{
-            putFragment(homefrag);
+        else if(open.equals("map")){
+            tabIndex=0;
+            putFragment(reportfrag);
+            setTitle(R.string.incidents);
+            botNav.findViewById(R.id.reports_item).performClick();
+        }
+        else if(open.equals("list")){
+            tabIndex=1;
+            putFragment(reportfrag);
+            setTitle(R.string.incidents);
+            botNav.findViewById(R.id.reports_item).performClick();
+        }
+        else if(open.equals("add")){
+            putFragment(secfrag);
+            setTitle(R.string.send_incident);
+            botNav.findViewById(R.id.add_item).performClick();
         }
 
         context=this;
@@ -87,19 +94,18 @@ public class MainActivity extends Activity {
                 new RichBottomNavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        //.getMenu().findItem(R.id.recent_item).setChecked(false);
                         switch (item.getItemId()) {
                             case R.id.home_item:
-                                putFragment(homefrag);
-                                setTitle(R.string.app_name_short);
+                                Intent homeIntent=new Intent(context, HomeActivity.class);
+                                startActivity(homeIntent);
+                                //putFragment(homefrag);
+                                //setTitle(R.string.home);
                                 break;
                             case R.id.reports_item:
-                                //getActionBar().setDisplayShowHomeEnabled(true);
                                 putFragment(reportfrag);
-                                setTitle(R.string.app_name_short);
+                                setTitle(R.string.incidents);
                                 break;
                             case R.id.add_item:
-                                //getActionBar().setDisplayShowHomeEnabled(false);
                                 putFragment(secfrag);
                                 setTitle(R.string.send_incident);
                                 break;
@@ -111,48 +117,8 @@ public class MainActivity extends Activity {
                         return true;
                     }
                 });
-
-        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-
-                // checking for type intent filter
-                if (intent.getAction().equals(FirebaseConfig.REGISTRATION_COMPLETE)) {
-                    // gcm successfully registered
-                    // now subscribe to `global` topic to receive app wide notifications
-                    FirebaseMessaging.getInstance().subscribeToTopic(FirebaseConfig.TOPIC_GLOBAL);
-
-                } else if (intent.getAction().equals(FirebaseConfig.PUSH_NOTIFICATION)) {
-                    // new push notification is received
-
-                    String message = intent.getStringExtra("message");
-                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.push_notification)+" " + message, Toast.LENGTH_LONG).show();
-                }
-            }
-        };
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        // register GCM registration complete receiver
-        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
-                new IntentFilter(FirebaseConfig.REGISTRATION_COMPLETE));
-
-        // register new push message receiver
-        // by doing this, the activity will be notified each time a new message arrives
-        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
-                new IntentFilter(FirebaseConfig.PUSH_NOTIFICATION));
-
-        // clear the notification area when the app is opened
-        NotificationUtils.clearNotifications(getApplicationContext());
-    }
-
-    @Override
-    protected void onPause() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
-        super.onPause();
-    }
 
     protected void putFragment(Fragment frag){
         FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -175,7 +141,7 @@ public class MainActivity extends Activity {
         }
 
         //hide all first
-        if (homefrag.isAdded()) { ft.hide(homefrag); }
+        //if (homefrag.isAdded()) { ft.hide(homefrag); }
         if (reportfrag.isAdded()) { ft.hide(reportfrag); }
         if (secfrag.isAdded()) { ft.hide(secfrag); }
         if (menuFrag.isAdded()) { ft.hide(menuFrag); }
@@ -184,7 +150,7 @@ public class MainActivity extends Activity {
             ft.show(frag);
         } else {
             ft.add(R.id.fragment_container, frag);
-            //ft.addToBackStack(null);//problem with bottomNavigationView
+            ft.addToBackStack(null);//problem with bottomNavigationView
         }
         ft.commit();
     }
@@ -279,29 +245,29 @@ public class MainActivity extends Activity {
         return dir.delete();
     }
 
-    /*@Override
+    @Override
     public void onBackPressed() {
+        super.onBackPressed();
         FragmentManager manager = getFragmentManager();
         if(manager.getBackStackEntryCount() > 0) {
-            super.onBackPressed();
             Fragment currentFragment = manager.findFragmentById(R.id.fragment_container);
             if(currentFragment instanceof ReportsFragment){
-                botNav.getMenu().getItem(0).setChecked(true);
+                botNav.findViewById(R.id.reports_item).performClick();
             }
             else if(currentFragment instanceof AddReportFragment){
-                botNav.getMenu().getItem(1).setChecked(true);
+                botNav.findViewById(R.id.add_item).performClick();
             }
             else if(currentFragment instanceof MenuFragment){
-                botNav.getMenu().getItem(2).setChecked(true);
+                botNav.findViewById(R.id.likes_item).performClick();
+            }
+            else if(currentFragment instanceof HomeFragment){
+                botNav.findViewById(R.id.home_item).performClick();
             }
         }
+        else{
+            finish();
+        }
 
-    }*/
-
-    //change language
-    @Override
-    protected void attachBaseContext(Context base) {
-        super.attachBaseContext(LocaleHelper.onAttach(base));
     }
 
     public void updateViews(String languageCode) {

@@ -32,6 +32,7 @@ public class SelectCategoryActivity extends Activity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayShowHomeEnabled(false);
+            actionBar.setTitle(R.string.select_service);
         }
 
         Intent intent=getIntent();
