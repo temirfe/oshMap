@@ -47,8 +47,11 @@ public class MainActivity extends Activity {
             reportfrag = new ReportsFragment();
             secfrag = new AddReportFragment();
             menuFrag = new MenuFragment();
-            setContentView(R.layout.activity_main);
         }
+        if(reportfrag==null){reportfrag = new ReportsFragment();}
+        if(secfrag==null){secfrag = new AddReportFragment();}
+        if(menuFrag==null){menuFrag = new MenuFragment();}
+        setContentView(R.layout.activity_main);
 
         //bottomNav
         botNav = (RichBottomNavigationView) findViewById(R.id.bottom_navigation);

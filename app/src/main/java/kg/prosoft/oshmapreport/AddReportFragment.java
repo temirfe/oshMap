@@ -427,7 +427,7 @@ public class AddReportFragment extends Fragment implements View.OnClickListener,
             MyVolley.getInstance(activity).addToRequestQueue(req);
         }
         else{
-            focusView.requestFocus();}
+            if(focusView!=null){focusView.requestFocus();}}
     }
 
     @Override
