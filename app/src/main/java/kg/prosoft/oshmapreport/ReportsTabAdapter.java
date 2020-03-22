@@ -1,8 +1,10 @@
 package kg.prosoft.oshmapreport;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.support.v13.app.FragmentPagerAdapter;
+//import android.app.Fragment;
+//import android.app.FragmentManager;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;

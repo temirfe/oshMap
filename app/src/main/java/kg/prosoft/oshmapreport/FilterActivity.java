@@ -1,7 +1,8 @@
 package kg.prosoft.oshmapreport;
 
 import android.app.ActionBar;
-import android.app.Activity;
+//import android.app.Activity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -28,7 +29,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-public class FilterActivity extends Activity {
+public class FilterActivity extends AppCompatActivity {
 
     RadioGroup radio_group_verify;
     RadioGroup radio_group_ctgs;
@@ -41,7 +42,7 @@ public class FilterActivity extends Activity {
     String received_user;
     Intent received_intent;
     public TextView tv_addcategory;
-    Activity activity;
+    AppCompatActivity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +54,9 @@ public class FilterActivity extends Activity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayShowHomeEnabled(false);
+            Log.i("AAAAAAA","ActionBar is not null");
+        }else{
+            Log.i("BBBBBBB","ActionBar is null");
         }
         //prevent keyboard appearing onStart
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);

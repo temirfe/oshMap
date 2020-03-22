@@ -1,11 +1,16 @@
 package kg.prosoft.oshmapreport;
 
 
-import android.app.Activity;
+//import android.app.Activity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+//import android.app.Fragment;
+//import android.app.FragmentManager;
+//import android.app.FragmentTransaction;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -18,12 +23,11 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.provider.MediaStore;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
@@ -61,6 +65,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -73,7 +78,6 @@ import java.util.Map;
 
 import kg.prosoft.oshmapreport.utils.FirebaseConfig;
 
-import static android.R.attr.bitmap;
 import static android.app.Activity.RESULT_OK;
 
 
@@ -124,7 +128,7 @@ public class AddReportFragment extends Fragment implements View.OnClickListener,
     SessionManager session;
 
     Context context;
-    Activity activity;
+    AppCompatActivity activity;
     private Bitmap bitmap;
     private int user_id;
     public RelativeLayout rl_map;
@@ -141,7 +145,7 @@ public class AddReportFragment extends Fragment implements View.OnClickListener,
        /* if (savedInstanceState != null) {
             //et_title.setText(savedInstanceState.getString("title"));
         }*/
-        activity=getActivity();
+        activity=(AppCompatActivity)getActivity();
         context=activity.getApplicationContext();
         // Inflate the layout for this fragment
         rootView=inflater.inflate(R.layout.fragment_add_report, container, false);
@@ -430,12 +434,27 @@ public class AddReportFragment extends Fragment implements View.OnClickListener,
             if(focusView!=null){focusView.requestFocus();}}
     }
 
+    public String getRealPathFromURI(Context context, Uri contentUri) {
+        Cursor cursor = null;
+        try {
+            String[] proj = { MediaStore.Images.Media.DATA };
+            cursor = context.getContentResolver().query(contentUri,  proj, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CAMERA_CAPTURE_IMAGE_REQUEST_CODE && resultCode == RESULT_OK) {
             String path=fileUri.getPath();
-            Log.i("PATH OF FILE",path);
+            Log.e("CamPATH1",path);
             previewImage(path);
         }
         if (data == null) {return;}
@@ -462,15 +481,21 @@ public class AddReportFragment extends Fragment implements View.OnClickListener,
 
         else if(requestCode==101 && resultCode==RESULT_OK){ //get image from gallery
             Uri selectedImage = data.getData();
-
+            Log.e("selectedImage",selectedImage.toString());
             //get file path
             String[] filePathColumn = {MediaStore.Images.Media.DATA};
+            Log.e("filePathColumn",filePathColumn[0]);
+            Log.e("context",context.toString());
             Cursor cursor = context.getContentResolver().query(selectedImage, filePathColumn, null, null, null);
             assert cursor != null;
+            Log.e("cursor",cursor.toString());
             cursor.moveToFirst();
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            int columnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
+            Log.e("columnIndex",Integer.toString(columnIndex));
             String filePath = cursor.getString(columnIndex);
+
             cursor.close();
+            //Log.e("PATH2",filePath);
             previewImage(filePath);
 
         }
@@ -490,6 +515,7 @@ public class AddReportFragment extends Fragment implements View.OnClickListener,
 
     public void previewImage(String path){
         try {
+            Log.e("PATH3",path);
             bitmap = MyImageHelper.decodeSampledBitmapFromPath(path, 400, 400);
             selectedImages.add(getStringImage(bitmap));
 
@@ -611,6 +637,15 @@ public class AddReportFragment extends Fragment implements View.OnClickListener,
                             fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
 
                             intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            if(Build.VERSION.SDK_INT>=24){
+                                try{
+                                    Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
+                                    m.invoke(null);
+                                }catch(Exception e){
+                                    e.printStackTrace();
+                                }
+                            }
 
                             // start the image capture Intent
                             startActivityForResult(intent, CAMERA_CAPTURE_IMAGE_REQUEST_CODE);
@@ -635,8 +670,8 @@ public class AddReportFragment extends Fragment implements View.OnClickListener,
         isStoragePermissionGranted();
         return Uri.fromFile(getOutputMediaFile(type));
     }
-    private static File getOutputMediaFile(int type) {
 
+    private static File getOutputMediaFile(int type) {
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss",
                 Locale.getDefault()).format(new Date());
         File mediaFile;
@@ -677,9 +712,12 @@ public class AddReportFragment extends Fragment implements View.OnClickListener,
 
     public void isStoragePermissionGranted() {
         //http://stackoverflow.com/questions/3853472/creating-a-directory-in-sdcard-fails/38694026
+
+        int perm=ContextCompat.checkSelfPermission(context,android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        Log.i("PERMISSION",Integer.toString(perm));
+        Log.i("PERMISSION_GRANTED",Integer.toString(PackageManager.PERMISSION_GRANTED));
         if (Build.VERSION.SDK_INT >= 23) {
-            if (ContextCompat.checkSelfPermission(context,android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
+            if (perm!= PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(activity,
                         new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
             }

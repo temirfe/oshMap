@@ -1,13 +1,18 @@
 package kg.prosoft.oshmapreport;
 
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+//import android.app.Fragment;
+//import android.app.FragmentManager;
+//import android.app.FragmentTransaction;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 import android.view.MenuItem;
 
@@ -24,7 +29,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
 
     //HomeFragment homefrag;
     ReportsFragment reportfrag;
@@ -124,7 +129,7 @@ public class MainActivity extends Activity {
 
 
     protected void putFragment(Fragment frag){
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 
         fromBundle = new Bundle();
@@ -251,7 +256,7 @@ public class MainActivity extends Activity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        FragmentManager manager = getFragmentManager();
+        FragmentManager manager = getSupportFragmentManager();
         if(manager.getBackStackEntryCount() > 0) {
             Fragment currentFragment = manager.findFragmentById(R.id.fragment_container);
             if(currentFragment instanceof ReportsFragment){

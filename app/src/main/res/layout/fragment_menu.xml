@@ -17,6 +17,7 @@
             android:layout_height="match_parent"
             android:id="@+id/id_ll_login"
             android:clickable="true"
+            android:focusable="true"
             android:background="@drawable/blue_view_click"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
@@ -34,7 +35,8 @@
             <TextView
                 android:text="@string/login_register"
                 android:layout_width="wrap_content"
-                android:paddingLeft="10dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
                 android:paddingTop="3dp"
                 android:id="@+id/id_tv_login"
                 android:layout_height="wrap_content" />
@@ -45,6 +47,7 @@
             android:layout_height="match_parent"
             android:id="@+id/id_ll_goToAccount"
             android:clickable="true"
+            android:focusable="true"
             android:background="@drawable/blue_view_click"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
@@ -70,6 +73,7 @@
             android:layout_height="match_parent"
             android:id="@+id/id_ll_about"
             android:clickable="true"
+            android:focusable="true"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:paddingTop="10dp"

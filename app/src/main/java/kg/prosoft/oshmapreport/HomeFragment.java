@@ -4,14 +4,14 @@ package kg.prosoft.oshmapreport;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
-import android.util.Log;
+//import android.app.Fragment;
+import androidx.fragment.app.Fragment;
+
+//import androidx.viewpager.widget.ViewPager;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 

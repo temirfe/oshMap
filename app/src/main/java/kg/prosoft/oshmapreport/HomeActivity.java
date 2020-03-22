@@ -1,12 +1,13 @@
 package kg.prosoft.oshmapreport;
 
-import android.app.Activity;
+//import android.app.Activity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -16,7 +17,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import kg.prosoft.oshmapreport.utils.FirebaseConfig;
 import kg.prosoft.oshmapreport.utils.NotificationUtils;
 
-public class HomeActivity extends Activity implements View.OnClickListener{
+public class HomeActivity extends AppCompatActivity implements View.OnClickListener{
 
     LinearLayout ll_add;
     LinearLayout ll_list;

@@ -6,7 +6,9 @@ package kg.prosoft.oshmapreport.utils;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import android.content.SharedPreferences;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -23,6 +25,22 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = MyFirebaseMessagingService.class.getSimpleName();
 
     private NotificationUtils notificationUtils;
+
+    @Override
+    public void onNewToken(String token) {
+        Log.d(TAG, "Refreshed token: " + token);
+        storeRegIdInPref(token);
+        // Notify UI that registration has completed, so the progress indicator can be hidden.
+        Intent registrationComplete = new Intent(FirebaseConfig.REGISTRATION_COMPLETE);
+        registrationComplete.putExtra("token", token);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(registrationComplete);
+    }
+    private void storeRegIdInPref(String token) {
+        SharedPreferences pref = getApplicationContext().getSharedPreferences(FirebaseConfig.SHARED_PREF, 0);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("regId", token);
+        editor.apply();
+    }
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {

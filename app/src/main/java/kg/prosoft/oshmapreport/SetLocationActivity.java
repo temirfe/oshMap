@@ -2,8 +2,8 @@ package kg.prosoft.oshmapreport;
 
 import android.app.ActionBar;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.os.Bundle;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -18,11 +18,12 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 import android.content.pm.PackageManager;
 import android.Manifest;
 import android.location.Location;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;

@@ -6,22 +6,22 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.CallSuper;
-import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
-import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.NavigationView;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.os.ParcelableCompat;
-import android.support.v4.os.ParcelableCompatCreatorCallbacks;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.view.menu.MenuItemImpl;
-import android.support.v7.view.menu.MenuView;
+import androidx.annotation.CallSuper;
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import 	com.google.android.material.bottomnavigation.BottomNavigationView;
+import 	com.google.android.material.navigation.NavigationView;
+import androidx.core.content.ContextCompat;
+import androidx.core.os.ParcelableCompat;
+import androidx.core.os.ParcelableCompatCreatorCallbacks;
+import androidx.core.view.ViewCompat;
+import androidx.appcompat.view.menu.MenuView;
+import androidx.appcompat.view.menu.MenuItemImpl;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
-import static android.support.design.widget.TabLayout.Tab.INVALID_POSITION;
+import static com.google.android.material.tabs.TabLayout.Tab.INVALID_POSITION;
 
 /**
  * Created by Nikola on 10/31/2016.

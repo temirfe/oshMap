@@ -1,7 +1,8 @@
 package kg.prosoft.oshmapreport;
 
 import android.app.ActionBar;
-import android.app.Activity;
+//import android.app.Activity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SelectCategoryActivity extends Activity {
+public class SelectCategoryActivity extends AppCompatActivity {
     ListView lv_categories;
     CategoriesAdapter adapter;
     List<Categories> mCategoriesList;

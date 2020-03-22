@@ -7,7 +7,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.app.Fragment;
+//import android.app.Fragment;
+import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +20,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -45,7 +46,7 @@ public class MapReportsFragment extends Fragment implements
     Uri.Builder uriB;
     public int user_id;
     public int ctg;
-    MapFragment mapFragment;
+    SupportMapFragment mapFragment;
     // Create a LatLngBounds that includes Osh. (sw,ne)
     private LatLngBounds OSH = new LatLngBounds(new LatLng(40.479966, 72.754476), new LatLng(40.565694, 72.852959));
     //private LatLngBounds BISHKEK = new LatLngBounds(new LatLng(42.790932,74.5002453), new LatLng(42.92415,74.6766403));
@@ -66,13 +67,15 @@ public class MapReportsFragment extends Fragment implements
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
 
-        if (Build.VERSION.SDK_INT < 21) {
-            mapFragment = (MapFragment) activity.getFragmentManager()
+        /*if (Build.VERSION.SDK_INT < 21) {
+            mapFragment = (SupportMapFragment) activity.getFragmentManager()
                     .findFragmentById(R.id.map_list_markers);
         } else {
-            mapFragment = (MapFragment) getChildFragmentManager()
+            mapFragment = (SupportMapFragment) getChildFragmentManager()
                     .findFragmentById(R.id.map_list_markers);
-        }
+        }*/
+        mapFragment = (SupportMapFragment) getChildFragmentManager()
+                .findFragmentById(R.id.map_list_markers);
         mapFragment.getMapAsync(this);
 
         return rootView;

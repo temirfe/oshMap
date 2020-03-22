@@ -7,15 +7,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -25,12 +24,13 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 
-import junit.framework.Assert;
+//import junit.framework.Assert;
+import org.junit.Assert;
 
 import java.util.ArrayList;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 
 public class GalleryActivity extends Activity {
     public static final String TAG = "GalleryActivity";
@@ -42,15 +42,15 @@ public class GalleryActivity extends Activity {
     public int initialImg;
     boolean initialSet;
 
-    @InjectView(R.id.pager) ViewPager _pager;
-    @InjectView(R.id.thumbnails) LinearLayout _thumbnails;
+    @BindView(R.id.pager) ViewPager _pager;
+    @BindView(R.id.thumbnails) LinearLayout _thumbnails;
    // @InjectView(R.id.btn_close) ImageButton _closeButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
 
         ActionBar actionBar = getActionBar();
         if (actionBar != null) {

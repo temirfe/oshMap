@@ -1,15 +1,18 @@
 package kg.prosoft.oshmapreport;
 
 import android.app.ActionBar;
-import android.app.Activity;
+//import android.app.Activity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.app.AlertDialog;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
+//import android.app.Fragment;
+//import android.app.FragmentTransaction;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -52,7 +55,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class IncidentViewActivity extends Activity {
+public class IncidentViewActivity extends AppCompatActivity {
 
     SessionManager session;
     public TextView tv_title;
@@ -77,7 +80,7 @@ public class IncidentViewActivity extends Activity {
     public RelativeLayout rl_map;
     String from;
     ProgressBar pb;
-    Activity activity;
+    AppCompatActivity activity;
     ArrayList<String> images = new ArrayList<String>();
     boolean saveCredentials;
     int rating;
@@ -377,7 +380,7 @@ public class IncidentViewActivity extends Activity {
     }
 
     protected void putFragment(Fragment frag){
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.id_fl_map, frag);
         //ft.addToBackStack(null);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
