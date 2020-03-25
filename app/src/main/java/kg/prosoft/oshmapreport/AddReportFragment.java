@@ -77,8 +77,10 @@ import java.util.Locale;
 import java.util.Map;
 
 import kg.prosoft.oshmapreport.utils.FirebaseConfig;
+import pub.devrel.easypermissions.EasyPermissions;
 
 import static android.app.Activity.RESULT_OK;
+import android.Manifest;
 
 
 /**
@@ -211,6 +213,14 @@ public class AddReportFragment extends Fragment implements View.OnClickListener,
 
 
         return rootView;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        // Forward results to EasyPermissions
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
 
     /*@Override
@@ -627,35 +637,43 @@ public class AddReportFragment extends Fragment implements View.OnClickListener,
         };
 
 
-        new AlertDialog.Builder(activity)
-                .setTitle(R.string.add_image)
-                .setAdapter(adapter, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int item) {
-                        if(item==0){
+        String[] galleryPermissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.CAMERA};
+        if (EasyPermissions.hasPermissions(activity, galleryPermissions)) {
+            new AlertDialog.Builder(activity)
+                    .setTitle(R.string.add_image)
+                    .setAdapter(adapter, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int item) {
 
-                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
 
-                            intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                            if(Build.VERSION.SDK_INT>=24){
-                                try{
-                                    Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
-                                    m.invoke(null);
-                                }catch(Exception e){
-                                    e.printStackTrace();
+                            if(item==0){
+
+                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
+
+                                intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+                                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                if(Build.VERSION.SDK_INT>=24){
+                                    try{
+                                        Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
+                                        m.invoke(null);
+                                    }catch(Exception e){
+                                        e.printStackTrace();
+                                    }
                                 }
-                            }
 
-                            // start the image capture Intent
-                            startActivityForResult(intent, CAMERA_CAPTURE_IMAGE_REQUEST_CODE);
+                                // start the image capture Intent
+                                startActivityForResult(intent, CAMERA_CAPTURE_IMAGE_REQUEST_CODE);
+                            }
+                            else if(item==1){
+                                Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                                startActivityForResult(i, 101);
+                            }
                         }
-                        else if(item==1){
-                            Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                            startActivityForResult(i, 101);
-                        }
-                    }
-                }).show();
+                    }).show();
+        } else {
+            EasyPermissions.requestPermissions(this, "Требуется разрешение к фото",
+                    101, galleryPermissions);
+        }
     }
 
     public String getStringImage(Bitmap bmp){
