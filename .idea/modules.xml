@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="oshMap/app" />
-      <module fileurl="file://$PROJECT_DIR$/oshMap.iml" filepath="$PROJECT_DIR$/oshMap.iml" group="oshMap" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/oshMap.iml" filepath="$PROJECT_DIR$/.idea/modules/oshMap.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/oshMap.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/oshMap.app.iml" />
     </modules>
   </component>
 </project>

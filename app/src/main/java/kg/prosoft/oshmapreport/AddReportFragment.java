@@ -371,11 +371,11 @@ public class AddReportFragment extends Fragment implements View.OnClickListener,
                             Object json = new JSONTokener(res).nextValue();
                             if (json instanceof JSONObject){
                                 JSONObject err = new JSONObject(res);
-                                //Log.i("RESPONSE err 1", err.toString());
+                                Log.i("RESPONSE err 1", err.toString());
                             }
                             else if (json instanceof JSONArray){
                                 JSONArray err = new JSONArray(res);
-                                //Log.i("RESPONSE err 1", err.toString());
+                                Log.i("RESPONSE err 1", err.toString());
                             }
                             progress.dismiss();
                             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
@@ -383,11 +383,11 @@ public class AddReportFragment extends Fragment implements View.OnClickListener,
                         } catch (UnsupportedEncodingException e1) {
                             // Couldn't properly decode data to string
                             e1.printStackTrace();
-                            //Log.i("RESPONSE err 2", "here");
+                            Log.i("RESPONSE err 2", "here");
                         } catch (JSONException e2) {
                             // returned data is not JSONObject?
                             e2.printStackTrace();
-                            //Log.i("RESPONSE err 3", "here");
+                            Log.i("RESPONSE err 3", "here");
                         }
                     }
                 }

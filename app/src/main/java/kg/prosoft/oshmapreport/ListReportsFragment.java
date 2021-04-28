@@ -226,7 +226,11 @@ public class ListReportsFragment extends Fragment {
                     }
 
 
-                }catch(JSONException e){e.printStackTrace();}
+                }catch(JSONException e){
+                    System.out.println(333333333);
+                    e.printStackTrace();
+                    System.out.println(444444444);
+                }
 
                 if(applyNewFilter){
                     adapter = new ReportListAdapter(context,mCommentList);
